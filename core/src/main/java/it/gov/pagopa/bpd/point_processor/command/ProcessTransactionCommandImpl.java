@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.point_processor.command;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.core.command.Command;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
+import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
@@ -26,13 +27,15 @@ public class ProcessTransactionCommandImpl extends BaseProcessTransactionCommand
                                          AwardPeriodConnectorService awardPeriodConnectorService,
                                          PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
                                          ObjectMapper objectMapper,
-                                         BeanFactory beanFactory){
+                                         BeanFactory beanFactory,
+                                         TransactionMapper transactionMapper){
         super(processTransactionCommandModel,
               winningTransactionConnectorService,
               awardPeriodConnectorService,
               pointProcessorErrorPublisherService,
               objectMapper,
-              beanFactory);
+              beanFactory,
+              transactionMapper);
     }
 
 }

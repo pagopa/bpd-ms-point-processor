@@ -64,7 +64,6 @@ public class Transaction {
     Integer acquirerId;
 
     @NotNull
-    @NotBlank
     Integer merchantId;
 
 }

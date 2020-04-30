@@ -11,6 +11,7 @@ import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,16 +48,19 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
                                          AwardPeriodConnectorService awardPeriodConnectorService,
                                          PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
                                          ObjectMapper objectMapper,
-                                         BeanFactory beanFactory){
+                                         BeanFactory beanFactory,
+                                         TransactionMapper transactionMapper){
         this.processTransactionCommandModel = processTransactionCommandModel;
         this.winningTransactionConnectorService = winningTransactionConnectorService;
         this.awardPeriodConnectorService = awardPeriodConnectorService;
         this.pointProcessorErrorPublisherService = pointProcessorErrorPublisherService;
         this.objectMapper = objectMapper;
         this.beanFactory = beanFactory;
+        this.transactionMapper = transactionMapper;
     }
 
 
+    @SneakyThrows
     @Override
     public Boolean doExecute() {
 
@@ -83,7 +87,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
                 BigDecimal awardScore = ruleEngineExecutionCommand.execute();
 
-                if (awardScore.doubleValue() > 0) {
+                if (awardScore.doubleValue() != 0) {
                     WinningTransaction winningTransaction = transactionMapper.map(transaction);
                     winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
                     winningTransaction.setScore(awardScore);
@@ -95,23 +99,30 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             return true;
 
         } catch (Exception e) {
-            if (logger.isErrorEnabled()) {
-                logger.error("Error occured during processing for transaction: " +
-                        transaction.getIdTrxAcquirer() + ", " +
-                        transaction.getAcquirerCode() + ", " +
-                        transaction.getTrxDate());
-            }
-            try {
-                pointProcessorErrorPublisherService.publishErrorEvent(
-                        objectMapper.writeValueAsBytes(transaction),
-                        processTransactionCommandModel.getHeaders(),
-                        "Error occured during processing for transaction:" + e.getMessage());
-            } catch (JsonProcessingException ex) {
+
+            if (transaction != null) {
+
                 if (logger.isErrorEnabled()) {
-                    logger.error(e.getMessage(),e);
+                    logger.error("Error occured during processing for transaction: " +
+                            transaction.getIdTrxAcquirer() + ", " +
+                            transaction.getAcquirerCode() + ", " +
+                            transaction.getTrxDate());
                 }
+                try {
+                    pointProcessorErrorPublisherService.publishErrorEvent(
+                            objectMapper.writeValueAsBytes(transaction),
+                            processTransactionCommandModel.getHeaders(),
+                            "Error occured during processing for transaction:" + e.getMessage());
+                } catch (JsonProcessingException ex) {
+                    if (logger.isErrorEnabled()) {
+                        logger.error(e.getMessage(), e);
+                    }
+                }
+
+                return false;
             }
-            return false;
+
+            throw e;
         }
 
     }
