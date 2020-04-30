@@ -26,8 +26,6 @@ public class TransactionMapper {
         if (transaction != null) {
             winningTransaction = WinningTransaction.builder().build();
             BeanUtils.copyProperties(transaction, winningTransaction);
-            //TODO: To remove awardedTransaction
-            winningTransaction.setAwardedTransaction(true);
         }
 
         return winningTransaction;

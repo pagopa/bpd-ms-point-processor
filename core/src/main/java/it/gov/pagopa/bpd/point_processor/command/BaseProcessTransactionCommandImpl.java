@@ -18,12 +18,17 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.validation.*;
 import java.math.BigDecimal;
+import java.util.Set;
 
 @Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Slf4j
 class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements ProcessTransactionCommand {
+
+    private static final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private static final Validator validator = factory.getValidator();
 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
     private WinningTransactionConnectorService winningTransactionConnectorService;
@@ -66,6 +71,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
                         transaction.getTrxDate());
             }
 
+            validateRequest(transaction);
+
             AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(
                     processTransactionCommandModel.getPayload().getTrxDate());
 
@@ -98,7 +105,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
                 pointProcessorErrorPublisherService.publishErrorEvent(
                         objectMapper.writeValueAsBytes(transaction),
                         processTransactionCommandModel.getHeaders(),
-                        "Error occured during processing for transaction");
+                        "Error occured during processing for transaction:" + e.getMessage());
             } catch (JsonProcessingException ex) {
                 if (logger.isErrorEnabled()) {
                     logger.error(e.getMessage(),e);
@@ -123,6 +130,19 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     @Autowired
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
+    }
+
+    /**
+     * Method to process a validation check for the parsed Transaction request
+     * @param request
+     *          instance of Transaction, parsed from the inbound byye[] payload
+     * @throws ConstraintViolationException
+     */
+    private void validateRequest(Transaction request) {
+        Set<ConstraintViolation<Object>> constraintViolations = validator.validate(request);
+        if (constraintViolations.size() > 0) {
+            throw new ConstraintViolationException(constraintViolations);
+        }
     }
 
 }

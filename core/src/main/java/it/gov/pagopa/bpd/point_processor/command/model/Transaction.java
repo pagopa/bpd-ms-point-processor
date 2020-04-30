@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
- * Model for transaction to be sent in the outbound channel
+ * Model for the inbound transaction to be processed
  */
 
 @Data
@@ -35,26 +35,36 @@ public class Transaction {
     @Size(max = 64)
     String hpan;
 
-    @Size(max = 5)
+    @NotNull
+    @NotBlank
+    @Size(max = 2)
     String operationType;
 
-    @Size(max = 5)
+    @NotNull
+    @NotBlank
+    @Size(max = 2)
     String circuitType;
 
+    @NotNull
     Integer idTrxIssuer;
 
     Integer correlationId;
 
+    @NotNull
     BigDecimal amount;
 
     @Size(max = 3)
     String amountCurrency;
 
+    @NotNull
+    @NotBlank
     @Size(max = 5)
     String mcc;
 
     Integer acquirerId;
 
+    @NotNull
+    @NotBlank
     Integer merchantId;
 
 }
