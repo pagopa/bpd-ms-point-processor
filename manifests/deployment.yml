@@ -1,0 +1,16 @@
+apiVersion : apps/v1beta1
+kind: Deployment
+metadata:
+  name: bpdmspointprocessor 
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: bpdmspointprocessor 
+    spec:
+      containers:
+        - name: bpdmspointprocessor 
+          image: cstarregistry.azurecr.io/bpdmspointprocessor
+          ports:
+          - containerPort: 8080
