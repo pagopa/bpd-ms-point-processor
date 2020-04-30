@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface AwardPeriodRestClient {
 
-    public List<AwardPeriod> getAwardPeriods(OffsetDateTime accountingDate);
+    List<AwardPeriod> getAwardPeriods(OffsetDateTime accountingDate);
 
 }

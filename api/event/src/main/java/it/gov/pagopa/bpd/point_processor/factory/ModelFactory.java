@@ -1,4 +1,4 @@
-package it.gov.pagopa.rtd.transaction_manager.factory;
+package it.gov.pagopa.bpd.point_processor.factory;
 
 /**
  * interface to be used for inheritance for model factories from a DTO

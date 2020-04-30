@@ -4,5 +4,5 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource("classpath:config/WinningTransactionProcessorRestConnector.properties")
+@PropertySource("classpath:config/WinningTransactionRestConnector.properties")
 public class WinningTransactionRestConnectorConfig { }

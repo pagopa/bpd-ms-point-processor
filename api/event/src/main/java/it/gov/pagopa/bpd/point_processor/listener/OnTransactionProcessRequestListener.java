@@ -1,9 +1,10 @@
-package it.gov.pagopa.rtd.transaction_manager.listener;
+package it.gov.pagopa.bpd.point_processor.listener;
 
 import eu.sia.meda.eventlistener.BaseEventListener;
 import it.gov.pagopa.bpd.point_processor.command.ProcessTransactionCommand;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
-import it.gov.pagopa.rtd.transaction_manager.factory.ModelFactory;
+import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
+import it.gov.pagopa.bpd.point_processor.factory.ModelFactory;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,8 +16,8 @@ import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Class Extending the MEDA BaseEventListener, manages the inbound requests, and calls on the appropriate
- * command for the check and send logic associated to the Transaction payload
+ * Class Extending the {@link BaseEventListener}, manages the inbound requests, and calls on the appropriate
+ * command for the check and send logic associated to the {@link Transaction} payload
  */
 
 @Service
@@ -62,15 +63,12 @@ public class OnTransactionProcessRequestListener extends BaseEventListener {
                     ProcessTransactionCommand.class, processTransactionCommandModel);
 
             if (!command.execute()) {
-                throw new Exception("Failed to execute ProcessTransactionCommand");
-            }
-
-            if (logger.isDebugEnabled()) {
+                logger.debug("Failed to execute ProcessTransactionCommand");
+            } else {
                 logger.debug("ProcessTransactionCommand successfully executed for inbound message");
             }
 
         } catch (Exception e) {
-            //TODO: Gestione casi d'errori per acknowledgment
             String payloadString = "null";
             if (payload != null) {
                 try {

@@ -6,6 +6,6 @@ import java.time.OffsetDateTime;
 
 public interface AwardPeriodConnectorService {
 
-    public AwardPeriod getAwardPeriod(OffsetDateTime accountingDate);
+    AwardPeriod getAwardPeriod(OffsetDateTime accountingDate);
 
 }

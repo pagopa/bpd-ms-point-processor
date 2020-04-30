@@ -4,6 +4,6 @@ import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.Win
 
 public interface WinningTransactionConnectorService {
 
-    public WinningTransaction saveWinningTransaction(WinningTransaction winningTransaction);
+    WinningTransaction saveWinningTransaction(WinningTransaction winningTransaction);
 
 }

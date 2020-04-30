@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
 
     <modules>
+        <module>event</module>
         <module>rest</module>
     </modules>
 </project>

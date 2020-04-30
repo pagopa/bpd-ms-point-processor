@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @Slf4j
-public class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
+class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
 
     private AwardPeriodRestClient awardPeriodRestClient;
 

@@ -1,4 +1,4 @@
-package it.gov.pagopa.rtd.transaction_manager.factory;
+package it.gov.pagopa.bpd.point_processor.factory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
