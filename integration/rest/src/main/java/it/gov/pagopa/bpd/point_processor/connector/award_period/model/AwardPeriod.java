@@ -1,13 +1,13 @@
 package it.gov.pagopa.bpd.point_processor.connector.award_period.model;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "awardPeriodId", callSuper = false)
 public class AwardPeriod {
 

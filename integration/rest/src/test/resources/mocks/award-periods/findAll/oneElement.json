@@ -1,0 +1,24 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "?offsetDateTime=2020-04-10T14:59:59.245Z",
+    "headers": {
+      "x-request-id": {
+        "anything": true
+      }
+    }
+  },
+  "response": {
+    "status": "200",
+    "jsonBody": [
+      {
+        "awardPeriodId": "1",
+        "startDate": "2020-04-01T14:59:59.245Z",
+        "endDate": "2020-04-30T14:59:59.245Z"
+      }
+    ],
+    "headers": {
+      "Content-Type": "application/hal+json"
+    }
+  }
+}

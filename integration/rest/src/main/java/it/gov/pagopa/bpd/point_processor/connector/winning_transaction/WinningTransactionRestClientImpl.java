@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 
 @Service
-class WinningTransactionRestClientImpl extends BaseService  implements WinningTransactionRestClient{
+class WinningTransactionRestClientImpl extends BaseService  implements WinningTransactionRestClient {
 
     private final WinningTransactionRestConnector connector;
     private final SimpleRestPostRequestTransformer requestTransformer;

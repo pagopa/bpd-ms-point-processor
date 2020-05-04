@@ -32,7 +32,7 @@ class AwardPeriodRestClientImpl extends BaseService implements AwardPeriodRestCl
 
         final HashMap<String, Object> params = new HashMap<>();
         final HashMap<String, Object> queryParams = new HashMap<>();
-        params.put("offsetDateTime", accountingDate.toString());
+        queryParams.put("offsetDateTime", accountingDate.toString());
 
         return connector.call(null, requestTransformer, responseTransformer, params, queryParams);
     }
