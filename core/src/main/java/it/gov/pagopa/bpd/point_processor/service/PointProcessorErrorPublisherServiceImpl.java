@@ -4,7 +4,7 @@ import eu.sia.meda.event.BaseEventConnector;
 import eu.sia.meda.event.service.BaseErrorPublisherService;
 import eu.sia.meda.event.transformer.ErrorEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.point_processor.config.PointProcessorErrorPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.PointProcessorErrorPublisherConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

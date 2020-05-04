@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.BaseTest;
 import eu.sia.meda.event.transformer.ErrorEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
-import it.gov.pagopa.bpd.point_processor.config.PointProcessorErrorPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.PointProcessorErrorPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import lombok.SneakyThrows;
 import org.junit.Assert;

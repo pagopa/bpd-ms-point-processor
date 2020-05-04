@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.point_processor.config;
+package it.gov.pagopa.bpd.point_processor;
 
 import eu.sia.meda.event.BaseEventConnector;
 import org.springframework.stereotype.Service;
