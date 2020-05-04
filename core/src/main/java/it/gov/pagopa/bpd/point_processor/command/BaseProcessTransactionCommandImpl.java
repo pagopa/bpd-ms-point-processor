@@ -17,13 +17,11 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import javax.validation.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
-@Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Slf4j
 class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements ProcessTransactionCommand {
@@ -142,6 +140,12 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
+
+    @Autowired
+    public void setTransactionMapper(TransactionMapper transactionMapper) {
+        this.transactionMapper = transactionMapper;
+    }
+
 
     /**
      * Method to process a validation check for the parsed Transaction request

@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.point_processor.listener.config;
+package it.gov.pagopa.bpd.point_processor.config;
 
 import org.springframework.context.annotation.ComponentScan;
 
@@ -6,6 +6,6 @@ import org.springframework.context.annotation.ComponentScan;
  * Test configuration class for api/event
  */
 
-@ComponentScan(basePackages = {"eu.sia.meda", "it.gov.pagopa.btd"})
+@ComponentScan(basePackages = {"eu.sia.meda", "it.gov.pagopa.bpd"})
 public class TestConfig {
 }

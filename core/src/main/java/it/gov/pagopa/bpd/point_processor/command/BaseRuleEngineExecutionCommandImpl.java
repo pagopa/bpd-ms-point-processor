@@ -5,12 +5,10 @@ import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.util.Random;
 
-@Component
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Slf4j
 class BaseRuleEngineExecutionCommandImpl extends BaseCommand<BigDecimal> implements RuleEngineExecutionCommand {

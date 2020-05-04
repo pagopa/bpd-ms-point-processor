@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Implementation of the ModelFactory interface, that maps a pair containing Kafka related byte[] payload and Headers
- * into a single model for usage inside the microservice core classes
+ * into a single model for usage inside the micro-service core classes
  */
 
 @Component
