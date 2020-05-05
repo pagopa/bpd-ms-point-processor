@@ -24,6 +24,9 @@ import org.springframework.beans.factory.BeanFactory;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+/**
+ * Class for unit-testing {@link ProcessTransactionCommand}
+ */
 public class ProcessTransactionCommandTest extends BaseTest {
 
     @Mock

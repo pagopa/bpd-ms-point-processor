@@ -11,6 +11,9 @@ import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * Class extending {@link BaseService}, and implementing {@link AwardPeriodRestClient}
+ */
 @Service
 class AwardPeriodRestClientImpl extends BaseService implements AwardPeriodRestClient {
 
@@ -26,6 +29,13 @@ class AwardPeriodRestClientImpl extends BaseService implements AwardPeriodRestCl
         this.requestTransformer = requestTransformer;
         this.responseTransformer = responseTransformer;
     }
+
+    /**
+     * Method for calling on the endpoint for finding {@link List<AwardPeriod>} related to the input date
+     * @param accountingDate
+     *            Instance of {@link OffsetDateTime} used to search for available {@link AwardPeriod}
+     * @return Instance of {@link List<AwardPeriod>} related to the accountingDate
+     */
 
     @Override
     public List<AwardPeriod> getAwardPeriods(OffsetDateTime accountingDate) {

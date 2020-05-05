@@ -6,6 +6,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Class extension of {@link MedaInternalConnector}, used as
+ * connector for the REST service related to {@link AwardPeriod}
+ */
 
 @Service
 class AwardPeriodRestConnector

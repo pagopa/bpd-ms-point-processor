@@ -9,6 +9,10 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 
+/**
+ * Class extending {@link BaseService}, and implementing {@link WinningTransactionRestClient}
+ */
+
 @Service
 class WinningTransactionRestClientImpl extends BaseService  implements WinningTransactionRestClient {
 
@@ -25,6 +29,12 @@ class WinningTransactionRestClientImpl extends BaseService  implements WinningTr
         this.responseTransformer = responseTransformer;
     }
 
+    /**
+     * Method for calling on the endpoint for saving a {@link WinningTransaction} instance
+     * @param winningTransaction
+     *              Instance of {@link WinningTransaction} to be saved
+     * @return Instance of {@link WinningTransaction} containing the returing resource of the saving process
+     */
     public WinningTransaction saveWinningTransaction(WinningTransaction winningTransaction) {
         final HashMap<String, Object> params = new HashMap<>();
         final HashMap<String, Object> queryParams = new HashMap<>();

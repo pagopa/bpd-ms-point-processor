@@ -17,7 +17,7 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Class Extending the {@link BaseEventListener}, manages the inbound requests, and calls on the appropriate
- * command for the check and send logic associated to the {@link Transaction} payload
+ * command for the processing logic, associated to the {@link Transaction} payload
  */
 
 @Service
@@ -39,7 +39,7 @@ public class OnTransactionProcessRequestListener extends BaseEventListener {
     /**
      * Method called on receiving a message in the inbound queue,
      * that should contain a JSON payload containing transaction data,
-     * calls on a command to execute the check and send logic for the input Transaction data
+     * calls on a command to execute the check and send logic for the input {@link Transaction} data
      * In case of error, sends data to an error channel
      * @param payload
      *          Message JSON payload in byte[] format

@@ -15,6 +15,9 @@ import org.mockito.Mockito;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
+/**
+ * Class for unit-testing {@link WinningTransactionConnectorService}
+ */
 public class WinningTransactionConnectorServiceTest extends BaseTest {
 
     @Mock

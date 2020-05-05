@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
- * Test class for the OnTransactionSaveRequestListener method
+ * Class for unit-testing {@link OnTransactionProcessRequestListener}
  */
 
 @Import({OnTransactionProcessRequestListener.class})

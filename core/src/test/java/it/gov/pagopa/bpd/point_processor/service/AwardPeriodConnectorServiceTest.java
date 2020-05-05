@@ -15,6 +15,9 @@ import org.mockito.Mockito;
 import java.time.OffsetDateTime;
 import java.util.Collections;
 
+/**
+ * Class for unit-testing {@link AwardPeriodConnectorService}
+ */
 public class AwardPeriodConnectorServiceTest extends BaseTest {
 
     @Mock

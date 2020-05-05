@@ -1,10 +1,11 @@
 package it.gov.pagopa.bpd.point_processor.config;
 
+import it.gov.pagopa.bpd.point_processor.listener.OnTransactionProcessRequestListener;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 /**
- * Configuration class for the OnTransactionSaveRequestListener class
+ * Configuration class for {@link OnTransactionProcessRequestListener}
  */
 
 @Configuration

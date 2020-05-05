@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Scope;
 import java.math.BigDecimal;
 import java.util.Random;
 
+/**
+ *
+ */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Slf4j
 class BaseRuleEngineExecutionCommandImpl extends BaseCommand<BigDecimal> implements RuleEngineExecutionCommand {

@@ -6,6 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Implementation of {@link WinningTransactionConnectorService}
+ */
+
 @Service
 @Slf4j
 class WinningTransactionConnectorServiceImpl implements WinningTransactionConnectorService {

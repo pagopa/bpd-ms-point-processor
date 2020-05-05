@@ -9,8 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * Implementation of the TransactionManagerErrorPublisherService, extends the BaseErrorPublisherService,
- * the connector has the responsibility to send error related messages on the appropriate queue
+ * Implementation of {@link PointProcessorErrorPublisherService}
  */
 
 @Service

@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * Integration Testing class for the whole micro-service, it executes the entire flow starting from the
- * inbound event listener, to the production of a message in the outbound channel
+ * inbound event listener, to the outbound call to the REST service
  */
 
 @ContextConfiguration(classes = {

@@ -22,6 +22,13 @@ import javax.validation.*;
 import java.math.BigDecimal;
 import java.util.Set;
 
+
+/**
+ * Class extending {@link BaseCommand<Boolean>}, implementation of {@link ProcessTransactionCommand}.
+ * The command defines the execution of the whole {@link Transaction} processing, aggregating and hiding the
+ * services used to call on the services and commands involved in the process
+ * @see ProcessTransactionCommandImpl
+ */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Slf4j
 class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements ProcessTransactionCommand {
@@ -58,6 +65,12 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     }
 
 
+    /**
+     * The processing logic contains the {@link Transaction} validation calls on {@link AwardPeriodConnectorService} to
+     * recover an appropriate awardPeriod to use, calls on {@link RuleEngineExecutionCommand} to obtain the score
+     * for the transaction, and if not equals to zero, calls on {@link WinningTransactionConnectorService} to save it
+     * @return {@link Boolean} defining the execution outcome
+     */
     @SneakyThrows
     @Override
     public Boolean doExecute() {
@@ -146,6 +159,10 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
         this.transactionMapper = transactionMapper;
     }
 
+    @Autowired
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     /**
      * Method to process a validation check for the parsed Transaction request

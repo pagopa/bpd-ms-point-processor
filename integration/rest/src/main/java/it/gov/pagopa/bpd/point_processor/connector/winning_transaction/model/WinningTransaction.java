@@ -1,10 +1,17 @@
 package it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model;
 
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+
+
+/**
+ * Resource model for the data recovered through {@link WinningTransactionRestClient}
+ */
+
 
 @Data
 @Builder

@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Implementation of the ModelFactory interface, that maps a pair containing Kafka related byte[] payload and Headers
+ * Implementation of {@link ModelFactory}, that maps a pair containing Kafka related byte[] payload and Headers
  * into a single model for usage inside the micro-service core classes
  */
 
@@ -31,7 +31,7 @@ public class ProcessTransactionCommandModelFactory implements
     /**
      *
      * @param requestData
-     * @return instance of SaveTransactionModel, containing a Transaction instance,
+     * @return instance of {@link ProcessTransactionCommandModel}, containing a {@link Transaction} instance,
      * mapped from the byte[] payload in the requestData, and the inbound Kafka headers
      */
 
@@ -48,11 +48,11 @@ public class ProcessTransactionCommandModelFactory implements
     }
 
     /**
-     * Method containing the logic for the parsing of the byte[] payload into an instance of Transaction,
-     * using the ObjectMapper
+     * Method containing the logic for the parsing of the byte[] payload
+     * into an instance of {@link Transaction}, using {@link ObjectMapper}
      * @param payload
-     *          inbound JSON payload in byte[] format, defining a Transaction
-     * @return instance of Transaction, mapped from the input json byte[] payload
+     *          inbound JSON payload in byte[] format, defining a {@link Transaction}
+     * @return instance of {@link Transaction}, mapped from the input json byte[] payload
      */
     private Transaction parsePayload(byte[] payload) {
         String json = new String(payload, StandardCharsets.UTF_8);
