@@ -119,7 +119,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
 
             Transaction sentTransaction = getRequestObject();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(sentTransaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00")));
             //TODO: Adapt for future rule implementation
             BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atMost(1))
                     .saveWinningTransaction(Mockito.any());
