@@ -23,7 +23,7 @@ public class OnTransactionProcessRequestListenerValidationErrorIntegrationTest
     private String topicPublished;
 
     @Override
-    protected Transaction getRequestObject() {
+    protected Object getRequestObject() {
         return Transaction.builder()
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-10T14:59:59.245Z"))
@@ -49,7 +49,7 @@ public class OnTransactionProcessRequestListenerValidationErrorIntegrationTest
     @Override
     protected void verifyPublishedMessages(List<ConsumerRecord<String, String>> records) {
         Assert.assertEquals(1,records.size());
-        Transaction sentTransaction = getRequestObject();
+        Transaction sentTransaction = (Transaction) getRequestObject();
         sentTransaction.setTrxDate(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00"));
         Transaction publishedTransaction = objectMapper.readValue(records.get(0).value(), Transaction.class);
         Assert.assertEquals(sentTransaction, publishedTransaction);

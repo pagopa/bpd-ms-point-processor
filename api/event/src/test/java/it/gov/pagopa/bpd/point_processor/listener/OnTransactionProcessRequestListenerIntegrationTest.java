@@ -84,7 +84,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     ObjectMapper objectMapper;
 
     @Override
-    protected Transaction getRequestObject() {
+    protected Object getRequestObject() {
          return Transaction.builder()
                 .idTrxAcquirer(1)
                 .acquirerCode("001")
@@ -118,7 +118,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
 
         try {
 
-            Transaction sentTransaction = getRequestObject();
+            Transaction sentTransaction = (Transaction) getRequestObject();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00")));
             //TODO: Adapt for future rule implementation
