@@ -139,6 +139,12 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     }
 
     @Autowired
+    public void setPointProcessorErrorPublisherService(
+            PointProcessorErrorPublisherService pointProcessorErrorPublisherService) {
+        this.pointProcessorErrorPublisherService = pointProcessorErrorPublisherService;
+    }
+
+    @Autowired
     public void setWinningTransactionConnectorService(
             WinningTransactionConnectorService winningTransactionConnectorService) {
         this.winningTransactionConnectorService = winningTransactionConnectorService;

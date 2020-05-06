@@ -50,6 +50,7 @@ import java.util.List;
         },
         properties = {
                 "listeners.eventConfigurations.items.OnTransactionProcessRequestListener.bootstrapServers=${spring.embedded.kafka.brokers}",
+                "connectors.eventConfigurations.items.PointProcessorErrorPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.mocked=true",
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.randomMock=false",
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.path=award-periods/findAll",
