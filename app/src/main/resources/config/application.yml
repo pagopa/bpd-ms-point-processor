@@ -23,4 +23,4 @@ meda:
 
 logging:
   level:
-    it.gov.pagopa.bpd..point_processor: ${LOG_LEVEL_BPD_POINT_PROCESSOR:DEBUG}
+    it.gov.pagopa.bpd.point_processor: ${LOG_LEVEL_BPD_POINT_PROCESSOR:DEBUG}
