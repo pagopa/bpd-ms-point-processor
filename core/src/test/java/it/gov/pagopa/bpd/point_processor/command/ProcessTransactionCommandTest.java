@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
@@ -304,6 +305,47 @@ public class ProcessTransactionCommandTest extends BaseTest {
         try {
 
             BDDMockito.doThrow(new Exception()).when(ruleEngineExecutionCommandMock).execute();
+
+            Boolean commandResult = processTransactionCommand.execute();
+            Assert.assertFalse(commandResult);
+
+            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
+                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
+            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
+                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
+            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+    }
+
+    @Test
+    public void testExecute_KO_ErrorProducer() {
+
+        Transaction transaction = getCommandModel();
+
+        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
+                ProcessTransactionCommandModel.builder().payload(transaction).build(),
+                winningTransactionConnectorServiceMock,
+                awardPeriodConnectorServiceMock,
+                pointProcessorErrorPublisherServiceMock,
+                objectMapperSpy,
+                beanFactoryMock,
+                transactionMapperSpy
+        );
+
+        try {
+
+            BDDMockito.doThrow(new Exception()).when(ruleEngineExecutionCommandMock).execute();
+            BDDMockito.doAnswer(invocationOnMock -> {
+                throw new JsonProcessingException("Error"){};
+            }).when(pointProcessorErrorPublisherServiceMock)
+                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
+
 
             Boolean commandResult = processTransactionCommand.execute();
             Assert.assertFalse(commandResult);
