@@ -38,4 +38,9 @@ public class ProcessTransactionCommandImpl extends BaseProcessTransactionCommand
               transactionMapper);
     }
 
+    @Override
+    public Boolean doExecute() {
+        return super.doExecute();
+    }
+
 }

@@ -173,7 +173,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     /**
      * Method to process a validation check for the parsed Transaction request
      * @param request
-     *          instance of Transaction, parsed from the inbound byye[] payload
+     *          instance of Transaction, parsed from the inbound byte[] payload
      * @throws ConstraintViolationException
      */
     private void validateRequest(Transaction request) {

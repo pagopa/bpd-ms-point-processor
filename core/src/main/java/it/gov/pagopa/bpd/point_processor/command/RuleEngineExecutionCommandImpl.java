@@ -21,4 +21,9 @@ public class RuleEngineExecutionCommandImpl extends BaseRuleEngineExecutionComma
         super(transaction);
     }
 
+    @Override
+    public BigDecimal doExecute() {
+        return super.doExecute();
+    }
+
 }
