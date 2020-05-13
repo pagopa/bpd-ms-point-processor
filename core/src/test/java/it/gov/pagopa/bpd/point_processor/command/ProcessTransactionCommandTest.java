@@ -272,9 +272,10 @@ public class ProcessTransactionCommandTest extends BaseTest {
                     .getAwardPeriod(Mockito.any());
 
             Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertTrue(commandResult);
+            Assert.assertFalse(commandResult);
 
-            BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
+            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
+                    .publishErrorEvent(Mockito.any(), Mockito.any(),Mockito.any());
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
             BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
@@ -406,7 +407,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         return AwardPeriod.builder()
                 .awardPeriodId(1L)
                 .startDate(OffsetDateTime.parse("2020-04-01T16:22:45.304Z").toLocalDate())
-                .endDate(OffsetDateTime.parse("2020-04-30T16:22:45.304Z").toLocalDate())
+                .endDate(OffsetDateTime.parse("2999-04-30T16:22:45.304Z").toLocalDate())
                 .build();
     }
 

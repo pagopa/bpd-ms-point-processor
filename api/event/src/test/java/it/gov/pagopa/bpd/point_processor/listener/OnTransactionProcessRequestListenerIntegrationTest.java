@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration;
@@ -33,6 +34,7 @@ import java.util.List;
  * inbound event listener, to the outbound call to the REST service
  */
 
+@EnableConfigurationProperties
 @ContextConfiguration(classes = {
         TestConfig.class,
         RestTemplateAutoConfiguration.class,
@@ -56,7 +58,9 @@ import java.util.List;
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.path=award-periods/findAll",
                 "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.mocked=true",
                 "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.randomMock=false",
-                "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.path=winning-transactions/save"
+                "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.path=winning-transactions/save",
+                "point-processor.mcc-score-multiplier.0000=0.10",
+
         })
 public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEventListenerIntegrationTest {
 
@@ -94,7 +98,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .hpan("test")
                 .merchantId(0)
                 .circuitType("00")
-                .mcc("813")
+                .mcc("0000")
                 .idTrxIssuer(0)
                 .amountCurrency("833")
                 .correlationId(1)

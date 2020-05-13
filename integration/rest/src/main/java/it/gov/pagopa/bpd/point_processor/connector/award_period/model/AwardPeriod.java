@@ -19,5 +19,6 @@ public class AwardPeriod {
     private Long awardPeriodId;
     private LocalDate startDate;
     private LocalDate endDate;
+    private Integer gracePeriod;
 
 }

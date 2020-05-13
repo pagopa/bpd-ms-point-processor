@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Scope;
 
 import javax.validation.*;
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 
@@ -27,6 +29,7 @@ import java.util.Set;
  * Class extending {@link BaseCommand<Boolean>}, implementation of {@link ProcessTransactionCommand}.
  * The command defines the execution of the whole {@link Transaction} processing, aggregating and hiding the
  * services used to call on the services and commands involved in the process
+ *
  * @see ProcessTransactionCommandImpl
  */
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
@@ -43,19 +46,22 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     private BeanFactory beanFactory;
     private ObjectMapper objectMapper;
     private TransactionMapper transactionMapper;
+    private LocalDate processDateTime;
 
-    public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel){
+    public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel) {
         this.processTransactionCommandModel = processTransactionCommandModel;
+        this.processDateTime = LocalDate.now();
     }
 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel,
-                                         WinningTransactionConnectorService winningTransactionConnectorService,
-                                         AwardPeriodConnectorService awardPeriodConnectorService,
-                                         PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
-                                         ObjectMapper objectMapper,
-                                         BeanFactory beanFactory,
-                                         TransactionMapper transactionMapper){
+                                             WinningTransactionConnectorService winningTransactionConnectorService,
+                                             AwardPeriodConnectorService awardPeriodConnectorService,
+                                             PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
+                                             ObjectMapper objectMapper,
+                                             BeanFactory beanFactory,
+                                             TransactionMapper transactionMapper) {
         this.processTransactionCommandModel = processTransactionCommandModel;
+        this.processDateTime = LocalDate.now();
         this.winningTransactionConnectorService = winningTransactionConnectorService;
         this.awardPeriodConnectorService = awardPeriodConnectorService;
         this.pointProcessorErrorPublisherService = pointProcessorErrorPublisherService;
@@ -69,6 +75,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
      * The processing logic contains the {@link Transaction} validation calls on {@link AwardPeriodConnectorService} to
      * recover an appropriate awardPeriod to use, calls on {@link RuleEngineExecutionCommand} to obtain the score
      * for the transaction, and if not equals to zero, calls on {@link WinningTransactionConnectorService} to save it
+     *
      * @return {@link Boolean} defining the execution outcome
      */
     @SneakyThrows
@@ -91,19 +98,43 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(
                     processTransactionCommandModel.getPayload().getTrxDate());
 
-            if (awardPeriod != null) {
+            if (awardPeriod == null) {
+                throw new Exception("No AwardPeriod found");
+            }
 
-                RuleEngineExecutionCommand ruleEngineExecutionCommand =
-                        beanFactory.getBean(RuleEngineExecutionCommand.class, transaction);
+            RuleEngineExecutionCommand ruleEngineExecutionCommand =
+                    beanFactory.getBean(RuleEngineExecutionCommand.class, transaction);
 
-                BigDecimal awardScore = ruleEngineExecutionCommand.execute();
+            BigDecimal awardScore = ruleEngineExecutionCommand.execute();
 
-                if (awardScore.doubleValue() != 0) {
-                    WinningTransaction winningTransaction = transactionMapper.map(transaction);
-                    winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-                    winningTransaction.setScore(awardScore);
-                    winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
+            if (awardScore.doubleValue() != 0) {
+                WinningTransaction winningTransaction = transactionMapper.map(transaction);
+
+                LocalDate startDate = awardPeriod.getStartDate();
+                LocalDate endDate = awardPeriod.getEndDate();
+
+                Integer gracePeriod = awardPeriod.getGracePeriod();
+
+                LocalDate endGracePeriodDate =
+                        endDate.plusDays(gracePeriod != null ? gracePeriod : 30);
+
+                if (processDateTime.isBefore(startDate)) {
+                    throw new Exception("Transaction set for a period after the current date");
                 }
+
+                if (processDateTime.isAfter(endGracePeriodDate)) {
+                    if (logger.isDebugEnabled()) {
+                        logger.debug("Transaction received after the end of it's awardPeriod grace time");
+                    }
+
+                    awardPeriod = awardPeriodConnectorService.getAwardPeriod(
+                            OffsetDateTime.from(processDateTime));
+
+                }
+
+                winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
+                winningTransaction.setScore(awardScore);
+                winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
 
             }
 
@@ -172,8 +203,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
     /**
      * Method to process a validation check for the parsed Transaction request
-     * @param request
-     *          instance of Transaction, parsed from the inbound byte[] payload
+     *
+     * @param request instance of Transaction, parsed from the inbound byte[] payload
      * @throws ConstraintViolationException
      */
     private void validateRequest(Transaction request) {

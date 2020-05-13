@@ -16,6 +16,11 @@ info:
 error-manager:
   enabled: true
 
+point-processor:
+  mcc-score-multiplier: {
+    "internal": "0.0"
+  }
+
 meda:
   core:
     sessioncontext:
