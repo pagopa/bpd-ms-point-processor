@@ -6,7 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -24,15 +25,26 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
     }
 
     /**
-     * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(OffsetDateTime)}, that contacts
-     * THe endpoint managed with {@link AwardPeriodRestClient} to recover an available {@link AwardPeriod}
+     * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(LocalDate)}, that contacts
+     * THe endpoint managed with {@link AwardPeriodRestClient} to recover {@link List<AwardPeriod>}, and recovers
+     * the first active period available
      * @param accountingDate
-     *              {@link OffsetDateTime} used for searching a {@link AwardPeriod}
+     *              {@link LocalDate} used for searching a {@link AwardPeriod}
      * @return instance of {@link AwardPeriod} associated to the input param
      */
-    public AwardPeriod getAwardPeriod(OffsetDateTime accountingDate) {
-        List<AwardPeriod> awardPeriods = awardPeriodRestClient.getAwardPeriods(accountingDate);
-        return awardPeriods.isEmpty() ? null : awardPeriods.get(0);
+    public AwardPeriod getAwardPeriod(LocalDate accountingDate) {
+        List<AwardPeriod> awardPeriods = awardPeriodRestClient.getAwardPeriods();
+        return awardPeriods.stream().sorted(Comparator.comparing(AwardPeriod::getStartDate))
+                .filter(awardPeriod -> {
+                    LocalDate startDate = awardPeriod.getStartDate();
+                    LocalDate endDate = awardPeriod.getEndDate();
+                    Integer gracePeriod = awardPeriod.getGracePeriod();
+                    LocalDate endGracePeriodDate = endDate.plusDays(gracePeriod != null ? gracePeriod : 30);
+                    return (accountingDate.equals(startDate) || accountingDate.isAfter(startDate)) &&
+                           (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate));
+
+                })
+                .findFirst().orElse(null);
     }
 
 }

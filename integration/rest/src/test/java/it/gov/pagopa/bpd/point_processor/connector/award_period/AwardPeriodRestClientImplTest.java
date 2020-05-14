@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -43,31 +42,12 @@ public class AwardPeriodRestClientImplTest extends BaseRestConnectorTest {
     @Test
     public void getAwardPeriods_Ok_NotEmpty() {
         try {
-            List<AwardPeriod> awardPeriods = awardPeriodRestClient
-                    .getAwardPeriods(OffsetDateTime.parse("2020-04-10T14:59:59.245Z"));
+            List<AwardPeriod> awardPeriods = awardPeriodRestClient.getAwardPeriods();
             Assert.assertFalse(awardPeriods.isEmpty());
         } catch (Exception e) {
             e.printStackTrace();
             Assert.fail();
         }
-    }
-
-    @Test
-    public void getAwardPeriods_Ok_Empty() {
-        try {
-            List<AwardPeriod> awardPeriods = awardPeriodRestClient
-                    .getAwardPeriods(OffsetDateTime.parse("2020-04-11T14:59:59.245Z"));
-            Assert.assertTrue(awardPeriods.isEmpty());
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-    }
-
-    @Test
-    public void getAwardPeriods_KO_Null() {
-        expectedException.expect(NullPointerException.class);
-        awardPeriodRestClient.getAwardPeriods(null);
     }
 
 }

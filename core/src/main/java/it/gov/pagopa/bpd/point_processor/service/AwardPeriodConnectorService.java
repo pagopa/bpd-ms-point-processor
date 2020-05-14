@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.point_processor.service;
 
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
 /**
@@ -18,6 +19,6 @@ public interface AwardPeriodConnectorService {
      *              {@link OffsetDateTime} used for searching a {@link AwardPeriod}
      * @return instance of {@link AwardPeriod} associated to the input param
      */
-    AwardPeriod getAwardPeriod(OffsetDateTime accountingDate);
+    AwardPeriod getAwardPeriod(LocalDate accountingDate);
 
 }

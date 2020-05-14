@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "?offsetDateTime=2020-04-10T14:59:59.245Z",
+    "url": "",
     "headers": {
       "x-request-id": {
         "anything": true

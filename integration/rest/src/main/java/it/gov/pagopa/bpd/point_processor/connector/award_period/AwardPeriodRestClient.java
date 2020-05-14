@@ -2,7 +2,6 @@ package it.gov.pagopa.bpd.point_processor.connector.award_period;
 
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 
-import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -13,10 +12,8 @@ public interface AwardPeriodRestClient {
 
     /**
      * Method for calling on the endpoint for finding {@link List<AwardPeriod>} related to the input date
-     * @param accountingDate
-     *            Instance of {@link OffsetDateTime} used to search for available {@link AwardPeriod}
-     * @return Instance of {@link List<AwardPeriod>} related to the accountingDate
+     * @return Instance of {@link List<AwardPeriod>}, active
      */
-    List<AwardPeriod> getAwardPeriods(OffsetDateTime accountingDate);
+    List<AwardPeriod> getAwardPeriods();
 
 }

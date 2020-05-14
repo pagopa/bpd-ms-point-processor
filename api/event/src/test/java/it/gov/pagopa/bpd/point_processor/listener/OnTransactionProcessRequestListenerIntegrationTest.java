@@ -8,6 +8,7 @@ import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelF
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
+import it.gov.pagopa.bpd.point_processor.service.ScoreMultiplierService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Assert;
@@ -26,6 +27,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
 
@@ -82,6 +84,9 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     AwardPeriodConnectorService awardPeriodConnectorServiceSpy;
 
     @SpyBean
+    ScoreMultiplierService scoreMultiplierService;
+
+    @SpyBean
     ProcessTransactionCommandModelFactory processTransactionCommandModelFactory;
 
     @Autowired
@@ -124,8 +129,9 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
 
             Transaction sentTransaction = (Transaction) getRequestObject();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00")));
-            //TODO: Adapt for future rule implementation
+                    .getAwardPeriod(Mockito.eq(LocalDate.now()));
+            BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
+                    .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
             BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atMost(1))
                     .saveWinningTransaction(Mockito.any());
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceSpy);

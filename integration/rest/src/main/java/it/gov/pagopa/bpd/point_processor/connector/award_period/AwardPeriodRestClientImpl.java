@@ -32,18 +32,14 @@ class AwardPeriodRestClientImpl extends BaseService implements AwardPeriodRestCl
 
     /**
      * Method for calling on the endpoint for finding {@link List<AwardPeriod>} related to the input date
-     * @param accountingDate
-     *            Instance of {@link OffsetDateTime} used to search for available {@link AwardPeriod}
      * @return Instance of {@link List<AwardPeriod>} related to the accountingDate
      */
 
     @Override
-    public List<AwardPeriod> getAwardPeriods(OffsetDateTime accountingDate) {
-
+    public List<AwardPeriod> getAwardPeriods() {
         final HashMap<String, Object> params = new HashMap<>();
         final HashMap<String, Object> queryParams = new HashMap<>();
-        queryParams.put("offsetDateTime", accountingDate.toString());
-
         return connector.call(null, requestTransformer, responseTransformer, params, queryParams);
     }
+
 }

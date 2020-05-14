@@ -25,7 +25,6 @@ import org.springframework.beans.factory.BeanFactory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneId;
 
 /**
  * Class for unit-testing {@link ProcessTransactionCommand}
@@ -56,6 +55,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
+    LocalDate localDate = LocalDate.now();
+
     @Before
     public void initTest() {
         Mockito.reset(
@@ -70,7 +71,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         BDDMockito.doReturn(ruleEngineExecutionCommandMock).when(beanFactoryMock)
                 .getBean(Mockito.eq(RuleEngineExecutionCommand.class),Mockito.any());
         BDDMockito.doReturn(getAwardPeriod()).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(getCommandModel().getTrxDate()));
+                .getAwardPeriod(Mockito.eq(localDate));
     }
 
     @Test
@@ -99,7 +100,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.eq(getSaveModel()));
@@ -206,7 +207,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.eq(getSaveModel()));
@@ -242,7 +243,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
@@ -279,7 +280,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
             BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
                     .publishErrorEvent(Mockito.any(), Mockito.any(),Mockito.any());
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
             BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
@@ -315,7 +316,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
             BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
                     .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
@@ -356,186 +357,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
             BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
                     .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
+                    .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-
-    }
-
-    @Test
-    public void testExecute_OK_NewAwardPeriod() {
-
-        Transaction transaction = getCommandModel();
-        transaction.setTrxDate(transaction.getTrxDate().plusDays(1));
-
-        LocalDate exceededPeriodDate = LocalDate.now();
-        exceededPeriodDate = exceededPeriodDate.minusDays(1);
-        AwardPeriod awardPeriod = new AwardPeriod();
-        awardPeriod.setStartDate(exceededPeriodDate);
-        awardPeriod.setEndDate(exceededPeriodDate);
-        awardPeriod.setGracePeriod(0);
-
-        AwardPeriod newAwardPeriod = new AwardPeriod();
-        newAwardPeriod.setStartDate(LocalDate.now());
-        newAwardPeriod.setEndDate(LocalDate.now());
-        newAwardPeriod.setGracePeriod(0);
-        newAwardPeriod.setAwardPeriodId(2L);
-
-        OffsetDateTime processDateTime =
-                OffsetDateTime.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()));
-
-        BDDMockito.doReturn(awardPeriod).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
-
-        BDDMockito.doReturn(newAwardPeriod).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(processDateTime));
-
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-                winningTransactionConnectorServiceMock,
-                awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
-                beanFactoryMock,
-                transactionMapperSpy
-        );
-
-        try {
-
-            BDDMockito.doReturn(BigDecimal.ONE).when(ruleEngineExecutionCommandMock).execute();
-
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertTrue(commandResult);
-
-            BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
-            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(processDateTime));
-            WinningTransaction saveModel = getSaveModel();
-            saveModel.setAwardPeriodId(2L);
-            saveModel.setTrxDate(transaction.getTrxDate());
-            BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(saveModel));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-
-    }
-
-    @Test
-    public void testExecute_KO_ProcessingBeforAwardPeriod() {
-
-        Transaction transaction = getCommandModel();
-        transaction.setTrxDate(transaction.getTrxDate().plusDays(1));
-
-        LocalDate exceededPeriodDate = LocalDate.now();
-        exceededPeriodDate = exceededPeriodDate.plusDays(1);
-        AwardPeriod awardPeriod = new AwardPeriod();
-        awardPeriod.setStartDate(exceededPeriodDate);
-        awardPeriod.setEndDate(exceededPeriodDate);
-        awardPeriod.setGracePeriod(0);
-
-
-        OffsetDateTime processDateTime =
-                OffsetDateTime.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()));
-
-        BDDMockito.doReturn(awardPeriod).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
-
-
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-                winningTransactionConnectorServiceMock,
-                awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
-                beanFactoryMock,
-                transactionMapperSpy
-        );
-
-        try {
-
-            BDDMockito.doReturn(BigDecimal.ONE).when(ruleEngineExecutionCommandMock).execute();
-
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertFalse(commandResult);
-
-            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
-                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
-            BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
-            BDDMockito.verifyNoMoreInteractions(awardPeriodConnectorServiceMock);
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-
-    }
-
-    @Test
-    public void testExecute_KO_NewAwardPeriod_Null() {
-
-        Transaction transaction = getCommandModel();
-        transaction.setTrxDate(transaction.getTrxDate().plusDays(1));
-
-        LocalDate exceededPeriodDate = LocalDate.now();
-        exceededPeriodDate = exceededPeriodDate.minusDays(1);
-        AwardPeriod awardPeriod = new AwardPeriod();
-        awardPeriod.setStartDate(exceededPeriodDate);
-        awardPeriod.setEndDate(exceededPeriodDate);
-        awardPeriod.setGracePeriod(0);
-
-        AwardPeriod newAwardPeriod = new AwardPeriod();
-        newAwardPeriod.setStartDate(LocalDate.now());
-        newAwardPeriod.setEndDate(LocalDate.now());
-        newAwardPeriod.setGracePeriod(0);
-        newAwardPeriod.setAwardPeriodId(2L);
-
-        OffsetDateTime processDateTime =
-                OffsetDateTime.from(LocalDate.now().atStartOfDay(ZoneId.systemDefault()));
-
-        BDDMockito.doReturn(awardPeriod).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
-
-        BDDMockito.doReturn(null).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(processDateTime));
-
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-                winningTransactionConnectorServiceMock,
-                awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
-                beanFactoryMock,
-                transactionMapperSpy
-        );
-
-        try {
-
-            BDDMockito.doReturn(BigDecimal.ONE).when(ruleEngineExecutionCommandMock).execute();
-
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertFalse(commandResult);
-
-            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
-                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(transaction.getTrxDate()));
-            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(processDateTime));
             BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
         } catch (Exception e) {
