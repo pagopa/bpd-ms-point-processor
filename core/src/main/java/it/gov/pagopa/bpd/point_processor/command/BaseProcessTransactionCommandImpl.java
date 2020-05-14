@@ -22,6 +22,7 @@ import javax.validation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Set;
 
 
@@ -102,6 +103,12 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
                 throw new Exception("No AwardPeriod found");
             }
 
+            LocalDate startDate = awardPeriod.getStartDate();
+
+            if (processDateTime.isBefore(startDate)) {
+                throw new Exception("Transaction set for a period after the current date");
+            }
+
             RuleEngineExecutionCommand ruleEngineExecutionCommand =
                     beanFactory.getBean(RuleEngineExecutionCommand.class, transaction);
 
@@ -110,26 +117,17 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             if (awardScore.doubleValue() != 0) {
                 WinningTransaction winningTransaction = transactionMapper.map(transaction);
 
-                LocalDate startDate = awardPeriod.getStartDate();
                 LocalDate endDate = awardPeriod.getEndDate();
-
                 Integer gracePeriod = awardPeriod.getGracePeriod();
-
                 LocalDate endGracePeriodDate =
                         endDate.plusDays(gracePeriod != null ? gracePeriod : 30);
-
-                if (processDateTime.isBefore(startDate)) {
-                    throw new Exception("Transaction set for a period after the current date");
-                }
 
                 if (processDateTime.isAfter(endGracePeriodDate)) {
                     if (logger.isDebugEnabled()) {
                         logger.debug("Transaction received after the end of it's awardPeriod grace time");
                     }
-
                     awardPeriod = awardPeriodConnectorService.getAwardPeriod(
-                            OffsetDateTime.from(processDateTime));
-
+                            OffsetDateTime.from(processDateTime.atStartOfDay(ZoneId.systemDefault())));
                 }
 
                 winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
