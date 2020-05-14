@@ -31,10 +31,9 @@ class BaseRuleEngineExecutionCommandImpl extends BaseCommand<BigDecimal> impleme
 
     @Override
     public BigDecimal doExecute() {
-        BigDecimal multiplier_sign = BigDecimal.valueOf(
-                ("01".equals(transaction.getOperationType()) ? -1.0 : 1.0));
         BigDecimal scoreMultiplier = scoreMultiplierService.getScoreMultiplier(transaction.getMcc());
-        return multiplier_sign.multiply(scoreMultiplier.multiply(transaction.getAmount()));
+        BigDecimal awardScore = scoreMultiplier.multiply(transaction.getAmount());
+        return "01".equals(transaction.getOperationType()) ? awardScore.negate() : awardScore;
     }
 
     @Autowired
