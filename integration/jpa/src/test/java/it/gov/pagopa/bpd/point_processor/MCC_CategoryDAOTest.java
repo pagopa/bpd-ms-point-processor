@@ -22,7 +22,6 @@ import java.math.BigDecimal;
         PropertiesManager.class
 })
 @TestPropertySource(properties = {
-        "logging.level.root=DEBUG",
         "connectors.jpaConfigurations.connection.show-sql=true",
         "spring.main.allow-bean-definition-overriding=true",
         "connectors.jpaConfigurations.connection.mocked:true",

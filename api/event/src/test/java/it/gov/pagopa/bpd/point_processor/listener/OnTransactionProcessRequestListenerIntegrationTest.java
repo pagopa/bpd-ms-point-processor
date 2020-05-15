@@ -66,6 +66,8 @@ import java.util.List;
                 "classpath:config/WinningTransactionRestConnector.properties"
         },
         properties = {
+                "connectors.jpaConfigurations.connection.mocked:true",
+                "connectors.jpaConfigurations.connection.path:postgres/",
                 "spring.main.allow-bean-definition-overriding=true",
                 "listeners.eventConfigurations.items.OnTransactionProcessRequestListener.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "connectors.eventConfigurations.items.PointProcessorErrorPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}",
