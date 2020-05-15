@@ -17,7 +17,8 @@ class ScoreMultiplierServiceImpl implements ScoreMultiplierService {
 
     public BigDecimal getScoreMultiplier(String mcc) {
         MCC_Category mcc_category = mcc_categoryDAO.findByMerchantCategoryCodes_Mcc(mcc);
-        return mcc_category != null ? mcc_category.getMultiplierScore() : BigDecimal.ZERO;
+        return mcc_category != null && mcc_category.getMultiplierScore() != null ?
+                mcc_category.getMultiplierScore() : BigDecimal.ZERO;
     }
 
 }
