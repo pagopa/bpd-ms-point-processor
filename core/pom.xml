@@ -18,6 +18,10 @@
         </dependency>
         <dependency>
             <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
+            <artifactId>bpd-ms-point-processor-integration-jpa</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
             <artifactId>bpd-ms-point-processor-integration-event</artifactId>
         </dependency>
         <dependency>

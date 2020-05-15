@@ -1,17 +1,24 @@
 package it.gov.pagopa.bpd.point_processor.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.sia.meda.connector.jpa.JPAConnectorImpl;
 import eu.sia.meda.event.service.ErrorPublisherService;
 import eu.sia.meda.eventlistener.BaseEventListenerIntegrationTest;
+import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
-import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
+import it.gov.pagopa.bpd.point_processor.connector.award_period.AwardPeriodRestClient;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
+import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.ScoreMultiplierService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.Assert;
+import org.junit.Before;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +27,9 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration;
 import org.springframework.test.context.ContextConfiguration;
@@ -37,6 +46,10 @@ import java.util.List;
  */
 
 @EnableConfigurationProperties
+@EnableJpaRepositories(
+        repositoryBaseClass = JPAConnectorImpl.class,
+        basePackages = {"it.gov.pagopa.bpd"}
+)
 @ContextConfiguration(classes = {
         TestConfig.class,
         RestTemplateAutoConfiguration.class,
@@ -53,6 +66,7 @@ import java.util.List;
                 "classpath:config/WinningTransactionRestConnector.properties"
         },
         properties = {
+                "spring.main.allow-bean-definition-overriding=true",
                 "listeners.eventConfigurations.items.OnTransactionProcessRequestListener.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "connectors.eventConfigurations.items.PointProcessorErrorPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.mocked=true",
@@ -89,8 +103,27 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     @SpyBean
     ProcessTransactionCommandModelFactory processTransactionCommandModelFactory;
 
+    @SpyBean
+    AwardPeriodRestClient awardPeriodRestClientSpy;
+
+    @SpyBean
+    WinningTransactionRestClient winningTransactionRestClient;
+
     @Autowired
     ObjectMapper objectMapper;
+
+    @MockBean
+    MCC_CategoryDAO mcc_categoryDAOMock;
+
+    @Before
+    public void setUp() {
+        MCC_Category mcc_category = new MCC_Category();
+        mcc_category.setMccCategoryId("0");
+        mcc_category.setMultiplierScore(BigDecimal.valueOf(0.10));
+        mcc_category.setMccCategoryDescription("test");
+        BDDMockito.doReturn(mcc_category).when(mcc_categoryDAOMock)
+                .findByMerchantCategoryCodes_Mcc(Mockito.eq("0000"));
+    }
 
     @Override
     protected Object getRequestObject() {
@@ -98,7 +131,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .idTrxAcquirer(1)
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-10T14:59:59.245Z"))
-                .amount(BigDecimal.valueOf(1313.13))
+                .amount(BigDecimal.valueOf(100))
                 .operationType("00")
                 .hpan("test")
                 .merchantId(0)
@@ -110,6 +143,27 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .acquirerId(0)
                 .build();
     }
+
+    protected Object getSentData() {
+        return WinningTransaction.builder()
+                .idTrxAcquirer(1)
+                .acquirerCode("001")
+                .trxDate(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00"))
+                .amount(BigDecimal.valueOf(100))
+                .operationType("00")
+                .hpan("test")
+                .merchantId(0)
+                .circuitType("00")
+                .mcc("0000")
+                .idTrxIssuer(0)
+                .amountCurrency("833")
+                .correlationId(1)
+                .acquirerId(0)
+                .awardPeriodId(1L)
+                .score(BigDecimal.valueOf(10D))
+                .build();
+    }
+
 
     @Override
     protected String getTopicSubscription() {
@@ -128,12 +182,16 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
         try {
 
             Transaction sentTransaction = (Transaction) getRequestObject();
+            WinningTransaction savedTransaction = (WinningTransaction) getSentData();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(LocalDate.now()));
+            BDDMockito.verify(awardPeriodRestClientSpy, Mockito.atLeastOnce()).getAwardPeriods();
             BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
                     .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
-            BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atMost(1))
+            BDDMockito.verify(winningTransactionRestClient, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.any());
+            BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atLeastOnce())
+                    .saveWinningTransaction(Mockito.eq(savedTransaction));
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceSpy);
 
         } catch (Exception e) {
