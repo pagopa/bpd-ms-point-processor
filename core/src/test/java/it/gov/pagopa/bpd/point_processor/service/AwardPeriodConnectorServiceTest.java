@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.point_processor.service;
 
 import eu.sia.meda.BaseTest;
-import it.gov.pagopa.bpd.point_processor.connector.award_period.AwardPeriodRestClient;
+import it.gov.pagopa.bpd.point_processor.connector.award_period.OldAwardPeriodRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,7 +23,7 @@ import java.util.Collections;
 public class AwardPeriodConnectorServiceTest extends BaseTest {
 
     @Mock
-    private AwardPeriodRestClient awardPeriodRestClientMock;
+    private OldAwardPeriodRestClient oldAwardPeriodRestClientMock;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -32,9 +32,9 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
     @Before
     public void initTest() {
-        Mockito.reset(awardPeriodRestClientMock);
+        Mockito.reset(oldAwardPeriodRestClientMock);
         awardPeriodConnectorService =
-                new AwardPeriodConnectorServiceImpl(awardPeriodRestClientMock);
+                new AwardPeriodConnectorServiceImpl(oldAwardPeriodRestClientMock);
     }
 
     @Test
@@ -43,14 +43,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         try {
 
             BDDMockito.doReturn(Collections.singletonList(getAwardPeriod()))
-                    .when(awardPeriodRestClientMock)
+                    .when(oldAwardPeriodRestClientMock)
                     .getAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(getRequestParam());
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
-            BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
+            BDDMockito.verify(oldAwardPeriodRestClientMock, Mockito.atLeastOnce())
                     .getAwardPeriods();
 
         } catch (Exception e) {
@@ -66,14 +66,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         try {
 
             BDDMockito.doReturn(Collections.emptyList())
-                    .when(awardPeriodRestClientMock)
+                    .when(oldAwardPeriodRestClientMock)
                     .getAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(getRequestParam());
 
             Assert.assertNull(awardPeriod);
-            BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
+            BDDMockito.verify(oldAwardPeriodRestClientMock, Mockito.atLeastOnce())
                     .getAwardPeriods();
 
         } catch (Exception e) {
@@ -88,13 +88,13 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
         BDDMockito.doAnswer(invocationOnMock -> {
             throw new Exception();
-        }).when(awardPeriodRestClientMock)
+        }).when(oldAwardPeriodRestClientMock)
                 .getAwardPeriods();
 
         expectedException.expect(Exception.class);
         awardPeriodConnectorService.getAwardPeriod(null);
 
-        BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
+        BDDMockito.verify(oldAwardPeriodRestClientMock, Mockito.atLeastOnce())
                 .getAwardPeriods();
 
     }
@@ -110,14 +110,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
             secondPeriod.setEndDate(OffsetDateTime.parse("2020-05-30T16:22:45.304Z").toLocalDate());
 
             BDDMockito.doReturn(Arrays.asList(firstPeriod, secondPeriod))
-                    .when(awardPeriodRestClientMock)
+                    .when(oldAwardPeriodRestClientMock)
                     .getAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(getRequestParam());
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
-            BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
+            BDDMockito.verify(oldAwardPeriodRestClientMock, Mockito.atLeastOnce())
                     .getAwardPeriods();
 
         } catch (Exception e) {
@@ -140,14 +140,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
             secondPeriod.setEndDate(OffsetDateTime.parse("2020-05-30T16:22:45.304Z").toLocalDate());
 
             BDDMockito.doReturn(Arrays.asList(firstPeriod, secondPeriod))
-                    .when(awardPeriodRestClientMock)
+                    .when(oldAwardPeriodRestClientMock)
                     .getAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(date);
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
-            BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
+            BDDMockito.verify(oldAwardPeriodRestClientMock, Mockito.atLeastOnce())
                     .getAwardPeriods();
 
         } catch (Exception e) {
@@ -171,14 +171,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
             secondPeriod.setEndDate(OffsetDateTime.parse("2020-05-30T16:22:45.304Z").toLocalDate());
 
             BDDMockito.doReturn(Arrays.asList(firstPeriod, secondPeriod))
-                    .when(awardPeriodRestClientMock)
+                    .when(oldAwardPeriodRestClientMock)
                     .getAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(date);
 
             Assert.assertEquals(secondPeriod, awardPeriod);
-            BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
+            BDDMockito.verify(oldAwardPeriodRestClientMock, Mockito.atLeastOnce())
                     .getAwardPeriods();
 
         } catch (Exception e) {

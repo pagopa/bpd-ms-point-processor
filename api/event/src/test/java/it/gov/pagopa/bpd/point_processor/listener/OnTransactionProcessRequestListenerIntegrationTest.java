@@ -7,7 +7,7 @@ import eu.sia.meda.eventlistener.BaseEventListenerIntegrationTest;
 import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
-import it.gov.pagopa.bpd.point_processor.connector.award_period.AwardPeriodRestClient;
+import it.gov.pagopa.bpd.point_processor.connector.award_period.OldAwardPeriodRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
@@ -106,7 +106,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     ProcessTransactionCommandModelFactory processTransactionCommandModelFactory;
 
     @SpyBean
-    AwardPeriodRestClient awardPeriodRestClientSpy;
+    OldAwardPeriodRestClient oldAwardPeriodRestClientSpy;
 
     @SpyBean
     WinningTransactionRestClient winningTransactionRestClient;
@@ -187,7 +187,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
             WinningTransaction savedTransaction = (WinningTransaction) getSentData();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(LocalDate.now()));
-            BDDMockito.verify(awardPeriodRestClientSpy, Mockito.atLeastOnce()).getAwardPeriods();
+            BDDMockito.verify(oldAwardPeriodRestClientSpy, Mockito.atLeastOnce()).getAwardPeriods();
             BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
                     .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
             BDDMockito.verify(winningTransactionRestClient, Mockito.atLeastOnce())

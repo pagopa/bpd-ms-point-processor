@@ -2,7 +2,7 @@ package it.gov.pagopa.bpd.point_processor.connector.winning_transaction;
 
 import eu.sia.meda.connector.meda.ArchMedaInternalConnectorConfigurationService;
 import eu.sia.meda.connector.rest.BaseRestConnectorTest;
-import it.gov.pagopa.bpd.point_processor.connector.award_period.AwardPeriodRestClient;
+import it.gov.pagopa.bpd.point_processor.connector.award_period.OldAwardPeriodRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
- * Test class for {@link AwardPeriodRestClient}
+ * Test class for {@link OldAwardPeriodRestClient}
  */
 
 @Import({
