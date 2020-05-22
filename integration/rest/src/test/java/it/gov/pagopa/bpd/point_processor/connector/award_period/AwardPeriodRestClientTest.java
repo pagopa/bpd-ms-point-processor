@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static java.lang.String.format;
 
 @TestPropertySource(
         locations = "classpath:config/award_period/rest-client.properties",
@@ -39,11 +38,9 @@ public class AwardPeriodRestClientTest extends BaseFeignRestClientTest {
     @Test
     public void getAwardPeriods_Ok_NotEmpty() throws IOException {
 
-        final String awardPeriodId = "1";
-
         InputStream mockedJson = getClass()
                 .getClassLoader()
-                .getResourceAsStream(format("award_period/activesMock.json", awardPeriodId));
+                .getResourceAsStream("award_period/activesMock.json");
 
         final JsonNode jsonNode = objectMapper.readTree(mockedJson);
 

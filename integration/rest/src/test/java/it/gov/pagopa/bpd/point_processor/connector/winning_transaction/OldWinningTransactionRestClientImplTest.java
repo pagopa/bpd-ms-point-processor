@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
  */
 
 @Import({
-        WinningTransactionRestClientImpl.class,
+        OldWinningTransactionRestClientImpl.class,
         WinningTransactionRestConnector.class,
         ArchMedaInternalConnectorConfigurationService.class
 })
@@ -33,10 +33,10 @@ import java.time.OffsetDateTime;
                 "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.randomMock=false",
                 "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.path=winning-transactions/save"
         })
-public class WinningTransactionRestClientImplTest extends BaseRestConnectorTest {
+public class OldWinningTransactionRestClientImplTest extends BaseRestConnectorTest {
 
     @Autowired
-    WinningTransactionRestClient winningTransactionRestClient;
+    OldWinningTransactionRestClient oldWinningTransactionRestClient;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -44,7 +44,7 @@ public class WinningTransactionRestClientImplTest extends BaseRestConnectorTest 
     @Test
     public void saveWinningTransaction_Ok() {
         try {
-            WinningTransaction winningTransaction = winningTransactionRestClient
+            WinningTransaction winningTransaction = oldWinningTransactionRestClient
                     .saveWinningTransaction(getSaveModel());
             Assert.assertNotNull(winningTransaction);
         } catch (Exception e) {

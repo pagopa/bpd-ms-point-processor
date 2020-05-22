@@ -7,8 +7,6 @@ import eu.sia.meda.eventlistener.BaseEventListenerIntegrationTest;
 import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
-import it.gov.pagopa.bpd.point_processor.connector.award_period.OldAwardPeriodRestClient;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
 import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
@@ -29,6 +27,8 @@ import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfigu
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
+import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration;
@@ -45,6 +45,7 @@ import java.util.List;
  * inbound event listener, to the outbound call to the REST service
  */
 
+@AutoConfigureWireMock
 @EnableConfigurationProperties
 @EnableJpaRepositories(
         repositoryBaseClass = JPAConnectorImpl.class,
@@ -56,7 +57,8 @@ import java.util.List;
         JacksonAutoConfiguration.class,
         ObjectPostProcessorConfiguration.class,
         AuthenticationConfiguration.class,
-        KafkaAutoConfiguration.class
+        KafkaAutoConfiguration.class,
+        FeignAutoConfiguration.class
 })
 @TestPropertySource(
         locations = {
@@ -105,11 +107,11 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     @SpyBean
     ProcessTransactionCommandModelFactory processTransactionCommandModelFactory;
 
-    @SpyBean
-    OldAwardPeriodRestClient oldAwardPeriodRestClientSpy;
-
-    @SpyBean
-    WinningTransactionRestClient winningTransactionRestClient;
+//    @SpyBean
+//    AwardPeriodRestClient awardPeriodRestClientSpy;
+//
+//    @SpyBean
+//    WinningTransactionRestClient winningTransactionRestClient;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -187,11 +189,11 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
             WinningTransaction savedTransaction = (WinningTransaction) getSentData();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(LocalDate.now()));
-            BDDMockito.verify(oldAwardPeriodRestClientSpy, Mockito.atLeastOnce()).getAwardPeriods();
+//            BDDMockito.verify(awardPeriodRestClientSpy, Mockito.atLeastOnce()).getAwardPeriods();
             BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
                     .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
-            BDDMockito.verify(winningTransactionRestClient, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.any());
+//            BDDMockito.verify(winningTransactionRestClient, Mockito.atLeastOnce())
+//                    .saveWinningTransaction(Mockito.any());
             BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.eq(savedTransaction));
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceSpy);
