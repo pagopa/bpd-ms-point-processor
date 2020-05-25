@@ -44,14 +44,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
             BDDMockito.doReturn(Collections.singletonList(getAwardPeriod()))
                     .when(awardPeriodRestClientMock)
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(getRequestParam());
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,14 +67,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
             BDDMockito.doReturn(Collections.emptyList())
                     .when(awardPeriodRestClientMock)
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(getRequestParam());
 
             Assert.assertNull(awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -89,13 +89,13 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         BDDMockito.doAnswer(invocationOnMock -> {
             throw new Exception();
         }).when(awardPeriodRestClientMock)
-                .getAwardPeriods();
+                .getActiveAwardPeriods();
 
         expectedException.expect(Exception.class);
         awardPeriodConnectorService.getAwardPeriod(null);
 
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .getAwardPeriods();
+                .getActiveAwardPeriods();
 
     }
 
@@ -111,14 +111,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
             BDDMockito.doReturn(Arrays.asList(firstPeriod, secondPeriod))
                     .when(awardPeriodRestClientMock)
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(getRequestParam());
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,14 +141,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
             BDDMockito.doReturn(Arrays.asList(firstPeriod, secondPeriod))
                     .when(awardPeriodRestClientMock)
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(date);
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -172,14 +172,14 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
             BDDMockito.doReturn(Arrays.asList(firstPeriod, secondPeriod))
                     .when(awardPeriodRestClientMock)
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
                     .getAwardPeriod(date);
 
             Assert.assertEquals(secondPeriod, awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                    .getAwardPeriods();
+                    .getActiveAwardPeriods();
 
         } catch (Exception e) {
             e.printStackTrace();

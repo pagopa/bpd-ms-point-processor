@@ -16,6 +16,6 @@ public interface AwardPeriodRestClient {
 
     @GetMapping(value = "${rest-client.award-period.actives.url}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    List<AwardPeriod> getAwardPeriods();
+    List<AwardPeriod> getActiveAwardPeriods();
 
 }

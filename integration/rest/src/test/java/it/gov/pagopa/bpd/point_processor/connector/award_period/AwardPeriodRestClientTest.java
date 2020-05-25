@@ -1,57 +1,58 @@
 package it.gov.pagopa.bpd.point_processor.connector.award_period;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import it.gov.pagopa.bpd.common.connector.BaseFeignRestClientTest;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.config.AwardPeriodRestConnectorConfig;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
+import lombok.SneakyThrows;
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.support.TestPropertySourceUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 @TestPropertySource(
         locations = "classpath:config/award_period/rest-client.properties",
         properties = "spring.application.name=bpd-ms-point-processor-integration-rest")
-@Import({AwardPeriodRestConnectorConfig.class})
+@ContextConfiguration(initializers = AwardPeriodRestClientTest.RandomPortInitializer.class,
+        classes = AwardPeriodRestConnectorConfig.class)
 public class AwardPeriodRestClientTest extends BaseFeignRestClientTest {
 
+    @ClassRule
+    public static WireMockClassRule wireMockRule = new WireMockClassRule(wireMockConfig()
+            .dynamicPort()
+            .usingFilesUnderClasspath("stubs/award-period")
+    );
 
-    static {
-        SERIVICE_PORT_ENV_VAR_NAME = "BPD_MS_AWARD_PERIOD_PORT";
+    @Test
+    public void getAwardPeriods_Ok_NotEmpty() {
+        final List<AwardPeriod> actualResponse = restClient.getActiveAwardPeriods();
+
+        Assert.assertNotNull(actualResponse);
+        Assert.assertFalse(actualResponse.isEmpty());
     }
 
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private AwardPeriodRestClient restClient;
 
-    @Test
-    public void getAwardPeriods_Ok_NotEmpty() throws IOException {
-
-        InputStream mockedJson = getClass()
-                .getClassLoader()
-                .getResourceAsStream("award_period/activesMock.json");
-
-        final JsonNode jsonNode = objectMapper.readTree(mockedJson);
-
-        stubFor(get(urlEqualTo("/bpd/award-periods/actives"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE)
-                        .withBody(jsonNode.toString())));
-
-        final List<AwardPeriod> actualResponse = restClient.getAwardPeriods();
-
-        Assert.assertFalse(actualResponse.isEmpty());
+    public static class RandomPortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @SneakyThrows
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext) {
+            TestPropertySourceUtils
+                    .addInlinedPropertiesToEnvironment(applicationContext,
+                            String.format("rest-client.award-period.base-url=http://%s:%d/bpd/award-periods",
+                                    wireMockRule.getOptions().bindAddress(),
+                                    wireMockRule.port())
+                    );
+        }
     }
 }

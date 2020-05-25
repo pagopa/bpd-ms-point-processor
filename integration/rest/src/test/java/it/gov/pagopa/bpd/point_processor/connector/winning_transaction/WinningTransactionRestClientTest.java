@@ -1,57 +1,59 @@
 package it.gov.pagopa.bpd.point_processor.connector.winning_transaction;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import it.gov.pagopa.bpd.common.connector.BaseFeignRestClientTest;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.config.WinningTransactionRestConnectorConfig;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import lombok.SneakyThrows;
 import org.junit.Assert;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.support.TestPropertySourceUtils;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 @TestPropertySource(
         locations = "classpath:config/winning_transaction/rest-client.properties",
         properties = "spring.application.name=bpd-ms-point-processor-integration-rest")
-@Import({WinningTransactionRestConnectorConfig.class})
+@ContextConfiguration(initializers = WinningTransactionRestClientTest.RandomPortInitializer.class,
+        classes = WinningTransactionRestConnectorConfig.class)
 public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
 
-    static {
-        SERIVICE_PORT_ENV_VAR_NAME = "BPD_MS_WINNING_TRANSACTION_PORT";
+    @ClassRule
+    public static WireMockClassRule wireMockRule = new WireMockClassRule(wireMockConfig()
+            .dynamicPort()
+            .usingFilesUnderClasspath("stubs/winning-transaction")
+    );
+
+    @Test
+    public void saveWinningTransaction_Ok() {
+        WinningTransaction winningTransaction = restClient.saveWinningTransaction(getSaveModel());
+
+        Assert.assertNotNull(winningTransaction);
     }
 
     @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
     private WinningTransactionRestClient restClient;
 
-    @Test
-    public void saveWinningTransaction_Ok() throws IOException {
-
-        InputStream mockedJson = getClass()
-                .getClassLoader()
-                .getResourceAsStream("winning_transaction/saveMock.json");
-
-        final JsonNode jsonNode = objectMapper.readTree(mockedJson);
-
-        stubFor(post(urlEqualTo("/bpd/winning-transactions"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.OK.value())
-                        .withHeader("Content-Type", MediaType.APPLICATION_JSON_UTF8_VALUE)
-                        .withBody(jsonNode.toString())));
-
-        WinningTransaction winningTransaction = restClient.saveWinningTransaction(getSaveModel());
-        Assert.assertNotNull(winningTransaction);
+    public static class RandomPortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+        @SneakyThrows
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext) {
+            TestPropertySourceUtils
+                    .addInlinedPropertiesToEnvironment(applicationContext,
+                            String.format("rest-client.winning-transaction.base-url=http://%s:%d/bpd/winning-transactions",
+                                    wireMockRule.getOptions().bindAddress(),
+                                    wireMockRule.port())
+                    );
+        }
     }
 
     protected WinningTransaction getSaveModel() {

@@ -33,7 +33,7 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
      * @return instance of {@link AwardPeriod} associated to the input param
      */
     public AwardPeriod getAwardPeriod(LocalDate accountingDate) {
-        List<AwardPeriod> awardPeriods = awardPeriodRestClient.getAwardPeriods();
+        List<AwardPeriod> awardPeriods = awardPeriodRestClient.getActiveAwardPeriods();
         return awardPeriods.stream().sorted(Comparator.comparing(AwardPeriod::getStartDate))
                 .filter(awardPeriod -> {
                     LocalDate startDate = awardPeriod.getStartDate();
