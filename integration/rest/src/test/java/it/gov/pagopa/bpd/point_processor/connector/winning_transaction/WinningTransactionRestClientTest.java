@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.gov.pagopa.bpd.common.connector.BaseFeignRestClientTest;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.config.WinningTransactionRestConnectorConfig;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +61,7 @@ public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(1313.13))
-                .operationType("00")
+                .operationType(OperationType.PAGAMENTO)
                 .hpan("hpan")
                 .merchantId("0")
                 .circuitType("00")

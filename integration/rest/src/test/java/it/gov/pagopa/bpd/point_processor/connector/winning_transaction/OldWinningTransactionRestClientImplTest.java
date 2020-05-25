@@ -4,6 +4,7 @@ import eu.sia.meda.connector.meda.ArchMedaInternalConnectorConfigurationService;
 import eu.sia.meda.connector.rest.BaseRestConnectorTest;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.OldAwardPeriodRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class OldWinningTransactionRestClientImplTest extends BaseRestConnectorTe
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(1313.13))
-                .operationType("00")
+                .operationType(OperationType.PAGAMENTO)
                 .hpan("hpan")
                 .merchantId("0")
                 .circuitType("00")

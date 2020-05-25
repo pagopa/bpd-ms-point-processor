@@ -8,6 +8,7 @@ import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
 import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
@@ -154,7 +155,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00"))
                 .amount(BigDecimal.valueOf(100))
-                .operationType("00")
+                .operationType(OperationType.PAGAMENTO)
                 .hpan("test")
                 .merchantId("0")
                 .circuitType("00")

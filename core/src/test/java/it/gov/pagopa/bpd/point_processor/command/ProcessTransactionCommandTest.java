@@ -7,6 +7,7 @@ import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommand
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
@@ -392,7 +393,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(1313.13))
-                .operationType("00")
+                .operationType(OperationType.PAGAMENTO)
                 .hpan("hpan")
                 .merchantId("0")
                 .circuitType("00")
