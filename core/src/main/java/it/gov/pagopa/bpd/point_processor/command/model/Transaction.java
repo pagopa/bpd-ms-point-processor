@@ -21,7 +21,8 @@ import java.time.OffsetDateTime;
 public class Transaction {
 
     @NotNull
-    Integer idTrxAcquirer;
+    @NotBlank
+    String idTrxAcquirer;
 
     @NotNull
     @NotBlank
@@ -46,9 +47,9 @@ public class Transaction {
     String circuitType;
 
     @NotNull
-    Integer idTrxIssuer;
+    String idTrxIssuer;
 
-    Integer correlationId;
+    String correlationId;
 
     @NotNull
     BigDecimal amount;
@@ -61,9 +62,10 @@ public class Transaction {
     @Size(max = 5)
     String mcc;
 
-    Integer acquirerId;
+    String acquirerId;
 
     @NotNull
-    Integer merchantId;
+    @NotBlank
+    String merchantId;
 
 }

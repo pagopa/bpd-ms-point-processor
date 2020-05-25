@@ -1,5 +1,6 @@
 package it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model;
 
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -19,7 +20,7 @@ import java.time.OffsetDateTime;
 @EqualsAndHashCode(of = {"idTrxAcquirer", "acquirerCode", "trxDate"}, callSuper = false)
 public class WinningTransaction {
 
-    Integer idTrxAcquirer;
+    String idTrxAcquirer;
 
     String acquirerCode;
 
@@ -28,13 +29,13 @@ public class WinningTransaction {
 
     String hpan;
 
-    String operationType;
+    OperationType operationType;
 
     String circuitType;
 
-    Integer idTrxIssuer;
+    String idTrxIssuer;
 
-    Integer correlationId;
+    String correlationId;
 
     BigDecimal amount;
 
@@ -48,8 +49,8 @@ public class WinningTransaction {
 
     Long awardPeriodId;
 
-    Integer acquirerId;
+    String acquirerId;
 
-    Integer merchantId;
+    String merchantId;
 
 }

@@ -7,6 +7,7 @@ import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommand
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
@@ -370,37 +371,37 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     protected Transaction getCommandModel() {
         return Transaction.builder()
-                .idTrxAcquirer(1)
+                .idTrxAcquirer("1")
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(1313.13))
                 .operationType("00")
                 .hpan("hpan")
-                .merchantId(0)
+                .merchantId("0")
                 .circuitType("00")
                 .mcc("813")
-                .idTrxIssuer(0)
+                .idTrxIssuer("0")
                 .amountCurrency("833")
-                .correlationId(1)
-                .acquirerId(0)
+                .correlationId("1")
+                .acquirerId("0")
                 .build();
     }
 
     protected WinningTransaction getSaveModel() {
         return WinningTransaction.builder()
-                .idTrxAcquirer(1)
+                .idTrxAcquirer("1")
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(1313.13))
-                .operationType("00")
+                .operationType(OperationType.PAGAMENTO)
                 .hpan("hpan")
-                .merchantId(0)
+                .merchantId("0")
                 .circuitType("00")
                 .mcc("813")
-                .idTrxIssuer(0)
+                .idTrxIssuer("0")
                 .amountCurrency("833")
-                .correlationId(1)
-                .acquirerId(0)
+                .correlationId("1")
+                .acquirerId("0")
                 .awardPeriodId(1L)
                 .score(BigDecimal.ONE)
                 .build();
