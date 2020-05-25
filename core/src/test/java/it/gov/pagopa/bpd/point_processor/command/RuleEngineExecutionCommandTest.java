@@ -118,19 +118,19 @@ public class RuleEngineExecutionCommandTest extends BaseTest {
 
     protected Transaction getCommandModel() {
         return Transaction.builder()
-                .idTrxAcquirer(1)
+                .idTrxAcquirer("1")
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(100.0))
                 .operationType("00")
                 .hpan("hpan")
-                .merchantId(0)
+                .merchantId("0")
                 .circuitType("00")
                 .mcc("813")
-                .idTrxIssuer(0)
+                .idTrxIssuer("0")
                 .amountCurrency("833")
-                .correlationId(1)
-                .acquirerId(0)
+                .correlationId("1")
+                .acquirerId("0")
                 .build();
     }
 

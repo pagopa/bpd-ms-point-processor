@@ -20,7 +20,7 @@ import java.time.OffsetDateTime;
 @EqualsAndHashCode(of = {"idTrxAcquirer", "acquirerCode", "trxDate"}, callSuper = false)
 public class WinningTransaction {
 
-    Integer idTrxAcquirer;
+    String idTrxAcquirer;
 
     String acquirerCode;
 
@@ -33,9 +33,9 @@ public class WinningTransaction {
 
     String circuitType;
 
-    Integer idTrxIssuer;
+    String idTrxIssuer;
 
-    Integer correlationId;
+    String correlationId;
 
     BigDecimal amount;
 
@@ -49,8 +49,8 @@ public class WinningTransaction {
 
     Long awardPeriodId;
 
-    Integer acquirerId;
+    String acquirerId;
 
-    Integer merchantId;
+    String merchantId;
 
 }
