@@ -28,8 +28,8 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
      * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(LocalDate)}, that contacts
      * THe endpoint managed with {@link AwardPeriodRestClient} to recover {@link List<AwardPeriod>}, and recovers
      * the first active period available
-     * @param accountingDate
-     *              {@link LocalDate} used for searching a {@link AwardPeriod}
+     *
+     * @param accountingDate {@link LocalDate} used for searching a {@link AwardPeriod}
      * @return instance of {@link AwardPeriod} associated to the input param
      */
     public AwardPeriod getAwardPeriod(LocalDate accountingDate) {

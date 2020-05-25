@@ -2,7 +2,7 @@ package it.gov.pagopa.bpd.point_processor.connector.winning_transaction;
 
 import eu.sia.meda.connector.meda.ArchMedaInternalConnectorConfigurationService;
 import eu.sia.meda.connector.rest.BaseRestConnectorTest;
-import it.gov.pagopa.bpd.point_processor.connector.award_period.AwardPeriodRestClient;
+import it.gov.pagopa.bpd.point_processor.connector.award_period.OldAwardPeriodRestClient;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -16,11 +16,11 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 
 /**
- * Test class for {@link AwardPeriodRestClient}
+ * Test class for {@link OldAwardPeriodRestClient}
  */
 
 @Import({
-        WinningTransactionRestClientImpl.class,
+        OldWinningTransactionRestClientImpl.class,
         WinningTransactionRestConnector.class,
         ArchMedaInternalConnectorConfigurationService.class
 })
@@ -33,10 +33,10 @@ import java.time.OffsetDateTime;
                 "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.randomMock=false",
                 "connectors.medaInternalConfigurations.items.WinningTransactionRestConnector.path=winning-transactions/save"
         })
-public class WinningTransactionRestClientImplTest extends BaseRestConnectorTest {
+public class OldWinningTransactionRestClientImplTest extends BaseRestConnectorTest {
 
     @Autowired
-    WinningTransactionRestClient winningTransactionRestClient;
+    OldWinningTransactionRestClient oldWinningTransactionRestClient;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -44,7 +44,7 @@ public class WinningTransactionRestClientImplTest extends BaseRestConnectorTest 
     @Test
     public void saveWinningTransaction_Ok() {
         try {
-            WinningTransaction winningTransaction = winningTransactionRestClient
+            WinningTransaction winningTransaction = oldWinningTransactionRestClient
                     .saveWinningTransaction(getSaveModel());
             Assert.assertNotNull(winningTransaction);
         } catch (Exception e) {

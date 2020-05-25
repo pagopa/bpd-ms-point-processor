@@ -14,11 +14,11 @@ import org.springframework.test.context.TestPropertySource;
 import java.util.List;
 
 /**
- * Test class for {@link AwardPeriodRestClient}
+ * Test class for {@link OldAwardPeriodRestClient}
  */
 
 @Import({
-        AwardPeriodRestClientImpl.class,
+        OldAwardPeriodRestClientImpl.class,
         AwardPeriodRestConnector.class,
         ArchMedaInternalConnectorConfigurationService.class
 })
@@ -31,10 +31,10 @@ import java.util.List;
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.randomMock=false",
                 "connectors.medaInternalConfigurations.items.AwardPeriodRestConnector.path=award-periods/findAll"
         })
-public class AwardPeriodRestClientImplTest extends BaseRestConnectorTest {
+public class OldAwardPeriodRestClientImplTest extends BaseRestConnectorTest {
 
     @Autowired
-    AwardPeriodRestClient awardPeriodRestClient;
+    OldAwardPeriodRestClient oldAwardPeriodRestClient;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
@@ -42,7 +42,7 @@ public class AwardPeriodRestClientImplTest extends BaseRestConnectorTest {
     @Test
     public void getAwardPeriods_Ok_NotEmpty() {
         try {
-            List<AwardPeriod> awardPeriods = awardPeriodRestClient.getAwardPeriods();
+            List<AwardPeriod> awardPeriods = oldAwardPeriodRestClient.getAwardPeriods();
             Assert.assertFalse(awardPeriods.isEmpty());
         } catch (Exception e) {
             e.printStackTrace();

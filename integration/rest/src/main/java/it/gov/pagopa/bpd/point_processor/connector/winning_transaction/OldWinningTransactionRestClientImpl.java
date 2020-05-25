@@ -10,20 +10,20 @@ import org.springframework.stereotype.Service;
 import java.util.HashMap;
 
 /**
- * Class extending {@link BaseService}, and implementing {@link WinningTransactionRestClient}
+ * Class extending {@link BaseService}, and implementing {@link OldWinningTransactionRestClient}
  */
 
 @Service
-class WinningTransactionRestClientImpl extends BaseService  implements WinningTransactionRestClient {
+class OldWinningTransactionRestClientImpl extends BaseService implements OldWinningTransactionRestClient {
 
     private final WinningTransactionRestConnector connector;
     private final SimpleRestPostRequestTransformer requestTransformer;
     private final SimpleRest2xxResponseTransformer<WinningTransaction> responseTransformer;
 
     @Autowired
-    public WinningTransactionRestClientImpl(WinningTransactionRestConnector connector,
-                                            SimpleRestPostRequestTransformer requestTransformer,
-                                     SimpleRest2xxResponseTransformer<WinningTransaction> responseTransformer) {
+    public OldWinningTransactionRestClientImpl(WinningTransactionRestConnector connector,
+                                               SimpleRestPostRequestTransformer requestTransformer,
+                                               SimpleRest2xxResponseTransformer<WinningTransaction> responseTransformer) {
         this.connector = connector;
         this.requestTransformer = requestTransformer;
         this.responseTransformer = responseTransformer;
