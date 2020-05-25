@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import it.gov.pagopa.bpd.common.connector.BaseFeignRestClientTest;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.config.WinningTransactionRestConnectorConfig;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -58,19 +59,19 @@ public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
 
     protected WinningTransaction getSaveModel() {
         return WinningTransaction.builder()
-                .idTrxAcquirer(1)
+                .idTrxAcquirer("1")
                 .acquirerCode("001")
                 .trxDate(OffsetDateTime.parse("2020-04-09T16:22:45.304Z"))
                 .amount(BigDecimal.valueOf(1313.13))
-                .operationType("00")
+                .operationType(OperationType.PAGAMENTO)
                 .hpan("hpan")
-                .merchantId(0)
+                .merchantId("0")
                 .circuitType("00")
                 .mcc("813")
-                .idTrxIssuer(0)
+                .idTrxIssuer("0")
                 .amountCurrency("833")
-                .correlationId(1)
-                .acquirerId(0)
+                .correlationId("1")
+                .acquirerId("0")
                 .awardPeriodId(1L)
                 .score(BigDecimal.ONE)
                 .build();

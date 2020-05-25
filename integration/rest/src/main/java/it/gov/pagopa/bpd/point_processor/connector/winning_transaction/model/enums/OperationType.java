@@ -3,6 +3,7 @@ package it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.en
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -18,16 +19,8 @@ public enum OperationType {
     private String code;
     private String description;
 
-    public String getCode() {
-        return code;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
     @JsonCreator
-    public static OperationType getFromCode( @JsonProperty("code") String code) {
+    public static OperationType getFromCode(@JsonProperty("code") String code) {
         for (OperationType operationType : OperationType.values()) {
             if (operationType.getCode().equals(code)) {
                 return operationType;
@@ -35,4 +28,14 @@ public enum OperationType {
         }
         return USI_FUTURI;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonValue
+    public String getCode() {
+        return code;
+    }
+
 }
