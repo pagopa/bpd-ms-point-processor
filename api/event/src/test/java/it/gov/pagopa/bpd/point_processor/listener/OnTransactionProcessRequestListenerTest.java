@@ -6,6 +6,7 @@ import eu.sia.meda.eventlistener.BaseEventListenerTest;
 import it.gov.pagopa.bpd.point_processor.command.ProcessTransactionCommand;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
+import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.mockito.BDDMockito;
@@ -51,6 +52,10 @@ public class OnTransactionProcessRequestListenerTest extends BaseEventListenerTe
     @MockBean
     ProcessTransactionCommand processTransactionCommandMock;
 
+    @MockBean
+    PointProcessorErrorPublisherService pointProcessorErrorPublisherService;
+
+
 
     @Before
     public void setUp() throws Exception {
@@ -58,7 +63,8 @@ public class OnTransactionProcessRequestListenerTest extends BaseEventListenerTe
         Mockito.reset(
                 onTransactionProcessRequestListenerSpy,
                 processTransactionCommandModelFactorySpy,
-                beanFactoryMock, processTransactionCommandMock);
+                beanFactoryMock, processTransactionCommandMock,
+                pointProcessorErrorPublisherService);
         Mockito.doReturn(true).when(processTransactionCommandMock).execute();
 
     }
@@ -103,7 +109,7 @@ public class OnTransactionProcessRequestListenerTest extends BaseEventListenerTe
 
     @Override
     protected ErrorPublisherService getErrorPublisherService() {
-        return null;
+        return pointProcessorErrorPublisherService;
     }
 
 }

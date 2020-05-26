@@ -1,7 +1,5 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
@@ -10,8 +8,8 @@ import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.Win
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
-import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
+import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -42,16 +40,10 @@ public class ProcessTransactionCommandTest extends BaseTest {
     private RuleEngineExecutionCommand ruleEngineExecutionCommandMock;
 
     @Mock
-    private PointProcessorErrorPublisherService pointProcessorErrorPublisherServiceMock;
-
-    @Mock
     BeanFactory beanFactoryMock;
 
     @Spy
     TransactionMapper transactionMapperSpy;
-
-    @Spy
-    ObjectMapper objectMapperSpy;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -64,11 +56,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
                 ruleEngineExecutionCommandMock,
-                pointProcessorErrorPublisherServiceMock,
                 beanFactoryMock,
-                transactionMapperSpy,
-                objectMapperSpy
-        );
+                transactionMapperSpy);
         BDDMockito.doReturn(ruleEngineExecutionCommandMock).when(beanFactoryMock)
                 .getBean(Mockito.eq(RuleEngineExecutionCommand.class),Mockito.any());
         BDDMockito.doReturn(getAwardPeriod()).when(awardPeriodConnectorServiceMock)
@@ -86,8 +75,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
@@ -99,7 +86,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
             Boolean commandResult = processTransactionCommand.execute();
             Assert.assertTrue(commandResult);
 
-            BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
@@ -113,6 +99,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
+    @SneakyThrows
     @Test
     public void testExecute_KO_TransactionValidation() {
 
@@ -123,27 +110,16 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
 
-        try {
+        exceptionRule.expect(Exception.class);
+        processTransactionCommand.execute();
 
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertFalse(commandResult);
-
-            BDDMockito.verify(pointProcessorErrorPublisherServiceMock, Mockito.atLeastOnce())
-                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
-            BDDMockito.verifyZeroInteractions(awardPeriodConnectorServiceMock);
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-            BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
+        BDDMockito.verifyZeroInteractions(awardPeriodConnectorServiceMock);
+        BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
+        BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
 
     }
 
@@ -157,8 +133,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(null).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
@@ -168,7 +142,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
             exceptionRule.expect(AssertionError.class);
             processTransactionCommand.execute();
 
-            BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verifyZeroInteractions(awardPeriodConnectorServiceMock);
             BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
             BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
@@ -193,8 +166,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
@@ -206,7 +177,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
             Boolean commandResult = processTransactionCommand.execute();
             Assert.assertTrue(commandResult);
 
-            BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
@@ -229,8 +199,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
@@ -242,7 +210,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
             Boolean commandResult = processTransactionCommand.execute();
             Assert.assertTrue(commandResult);
 
-            BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceMock);
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(localDate));
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
@@ -255,6 +222,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
+    @SneakyThrows
     @Test
     public void testExecute_OK_NoAwardPeriod() {
 
@@ -264,34 +232,27 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
 
-        try {
 
-            BDDMockito.doReturn(null).when(awardPeriodConnectorServiceMock)
-                    .getAwardPeriod(Mockito.any());
+        BDDMockito.doReturn(null).when(awardPeriodConnectorServiceMock)
+                .getAwardPeriod(Mockito.any());
 
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertFalse(commandResult);
+        exceptionRule.expect(Exception.class);
+        processTransactionCommand.execute();
 
-            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
-                    .publishErrorEvent(Mockito.any(), Mockito.any(),Mockito.any());
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
-            BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
+        BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
+                .getAwardPeriod(Mockito.eq(localDate));
+        BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
+        BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
+
 
     }
 
+    @SneakyThrows
     @Test
     public void testExecute_KO_RuleEngineCommandError() {
 
@@ -301,71 +262,19 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
                 beanFactoryMock,
                 transactionMapperSpy
         );
 
-        try {
+        BDDMockito.doThrow(new Exception()).when(ruleEngineExecutionCommandMock).execute();
 
-            BDDMockito.doThrow(new Exception()).when(ruleEngineExecutionCommandMock).execute();
+        exceptionRule.expect(Exception.class);
+        processTransactionCommand.execute();
 
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertFalse(commandResult);
-
-            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
-                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
-            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-
-    }
-
-    @Test
-    public void testExecute_KO_ErrorProducer() {
-
-        Transaction transaction = getCommandModel();
-
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-                winningTransactionConnectorServiceMock,
-                awardPeriodConnectorServiceMock,
-                pointProcessorErrorPublisherServiceMock,
-                objectMapperSpy,
-                beanFactoryMock,
-                transactionMapperSpy
-        );
-
-        try {
-
-            BDDMockito.doThrow(new Exception()).when(ruleEngineExecutionCommandMock).execute();
-            BDDMockito.doAnswer(invocationOnMock -> {
-                throw new JsonProcessingException("Error"){};
-            }).when(pointProcessorErrorPublisherServiceMock)
-                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
-
-
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertFalse(commandResult);
-
-            BDDMockito.verify(pointProcessorErrorPublisherServiceMock)
-                    .publishErrorEvent(Mockito.any(), Mockito.any(), Mockito.any());
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
-            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
+        BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
+                .getAwardPeriod(Mockito.eq(localDate));
+        BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
+        BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
     }
 

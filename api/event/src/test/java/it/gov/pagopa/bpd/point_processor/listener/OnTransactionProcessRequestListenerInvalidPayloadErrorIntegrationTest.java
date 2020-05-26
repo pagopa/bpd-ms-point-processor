@@ -32,7 +32,7 @@ public class OnTransactionProcessRequestListenerInvalidPayloadErrorIntegrationTe
     @SneakyThrows
     @Override
     protected void verifyPublishedMessages(List<ConsumerRecord<String, String>> records) {
-        Assert.assertEquals(0,records.size());
+        Assert.assertEquals(1,records.size());
     }
 
     @Override

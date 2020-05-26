@@ -217,11 +217,8 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
             WinningTransaction savedTransaction = (WinningTransaction) getSentData();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(LocalDate.now()));
-//            BDDMockito.verify(awardPeriodRestClientSpy, Mockito.atLeastOnce()).getAwardPeriods();
             BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
                     .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
-//            BDDMockito.verify(winningTransactionRestClient, Mockito.atLeastOnce())
-//                    .saveWinningTransaction(Mockito.any());
             BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.eq(savedTransaction));
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceSpy);

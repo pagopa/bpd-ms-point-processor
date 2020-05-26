@@ -1,7 +1,5 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.core.command.BaseCommand;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
@@ -9,7 +7,6 @@ import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPerio
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
-import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -41,9 +38,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
     private WinningTransactionConnectorService winningTransactionConnectorService;
     private AwardPeriodConnectorService awardPeriodConnectorService;
-    private PointProcessorErrorPublisherService pointProcessorErrorPublisherService;
     private BeanFactory beanFactory;
-    private ObjectMapper objectMapper;
     private TransactionMapper transactionMapper;
     private LocalDate processDateTime;
 
@@ -55,16 +50,12 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel,
                                              WinningTransactionConnectorService winningTransactionConnectorService,
                                              AwardPeriodConnectorService awardPeriodConnectorService,
-                                             PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
-                                             ObjectMapper objectMapper,
                                              BeanFactory beanFactory,
                                              TransactionMapper transactionMapper) {
         this.processTransactionCommandModel = processTransactionCommandModel;
         this.processDateTime = LocalDate.now();
         this.winningTransactionConnectorService = winningTransactionConnectorService;
         this.awardPeriodConnectorService = awardPeriodConnectorService;
-        this.pointProcessorErrorPublisherService = pointProcessorErrorPublisherService;
-        this.objectMapper = objectMapper;
         this.beanFactory = beanFactory;
         this.transactionMapper = transactionMapper;
     }
@@ -123,30 +114,15 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
                             transaction.getIdTrxAcquirer() + ", " +
                             transaction.getAcquirerCode() + ", " +
                             transaction.getTrxDate());
-                }
-                try {
-                    pointProcessorErrorPublisherService.publishErrorEvent(
-                            objectMapper.writeValueAsBytes(transaction),
-                            processTransactionCommandModel.getHeaders(),
-                            "Error occured during processing for transaction:" + e.getMessage());
-                } catch (JsonProcessingException ex) {
-                    if (logger.isErrorEnabled()) {
-                        logger.error(e.getMessage(), e);
-                    }
+                    logger.error(e.getMessage(), e);
                 }
 
-                return false;
             }
 
             throw e;
+
         }
 
-    }
-
-    @Autowired
-    public void setPointProcessorErrorPublisherService(
-            PointProcessorErrorPublisherService pointProcessorErrorPublisherService) {
-        this.pointProcessorErrorPublisherService = pointProcessorErrorPublisherService;
     }
 
     @Autowired
@@ -168,11 +144,6 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     @Autowired
     public void setTransactionMapper(TransactionMapper transactionMapper) {
         this.transactionMapper = transactionMapper;
-    }
-
-    @Autowired
-    public void setObjectMapper(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
     }
 
     /**

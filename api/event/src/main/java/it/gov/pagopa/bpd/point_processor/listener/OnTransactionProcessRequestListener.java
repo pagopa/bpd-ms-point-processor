@@ -1,10 +1,12 @@
 package it.gov.pagopa.bpd.point_processor.listener;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.eventlistener.BaseEventListener;
 import it.gov.pagopa.bpd.point_processor.command.ProcessTransactionCommand;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.factory.ModelFactory;
+import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,13 +29,19 @@ public class OnTransactionProcessRequestListener extends BaseEventListener {
     private final ModelFactory<Pair<byte[], Headers>, ProcessTransactionCommandModel>
             processTransactionCommandModelModelFactory;
     private final BeanFactory beanFactory;
+    private final PointProcessorErrorPublisherService pointProcessorErrorPublisherService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
     public OnTransactionProcessRequestListener(
             ModelFactory<Pair<byte[], Headers>,ProcessTransactionCommandModel> processTransactionCommandModelModelFactory,
-            BeanFactory beanFactory) {
+            BeanFactory beanFactory,
+            PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
+            ObjectMapper objectMapper) {
         this.processTransactionCommandModelModelFactory = processTransactionCommandModelModelFactory;
         this.beanFactory = beanFactory;
+        this.pointProcessorErrorPublisherService = pointProcessorErrorPublisherService;
+        this.objectMapper = objectMapper;
     }
 
     /**
@@ -51,14 +59,16 @@ public class OnTransactionProcessRequestListener extends BaseEventListener {
     @Override
     public void onReceived(byte[] payload, Headers headers) {
 
+        ProcessTransactionCommandModel processTransactionCommandModel = null;
+
         try {
 
             if (logger.isDebugEnabled()) {
                 logger.debug("Processing new request on inbound queue");
             }
 
-            ProcessTransactionCommandModel processTransactionCommandModel =
-                    processTransactionCommandModelModelFactory.createModel(Pair.of(payload, headers));
+            processTransactionCommandModel = processTransactionCommandModelModelFactory
+                    .createModel(Pair.of(payload, headers));
             ProcessTransactionCommand command = beanFactory.getBean(
                     ProcessTransactionCommand.class, processTransactionCommandModel);
 
@@ -69,17 +79,37 @@ public class OnTransactionProcessRequestListener extends BaseEventListener {
             }
 
         } catch (Exception e) {
+
             String payloadString = "null";
-            if (payload != null) {
-                try {
-                    payloadString = new String(payload, StandardCharsets.UTF_8);
-                } catch (Exception e2) {
+            String error = "Unexpected error during transaction processing";
+
+            try {
+                payloadString = new String(payload, StandardCharsets.UTF_8);
+            } catch (Exception e2) {
+                if (logger.isErrorEnabled()) {
                     logger.error("Something gone wrong converting the payload into String", e2);
                 }
-                logger.error(String.format(
-                        "Something gone wrong during the evaluation of the payload:%n%s", payloadString), e);
             }
-            throw e;
+
+            if (processTransactionCommandModel != null && processTransactionCommandModel.getPayload() != null) {
+                payloadString = new String(payload, StandardCharsets.UTF_8);
+                error = String.format("Unexpected error during transaction processing: %s, %s",
+                        payloadString, e.getMessage());
+            } else if (payload != null) {
+                error = String.format("Something gone wrong during the evaluation of the payload: %s, %s",
+                        payloadString, e.getMessage());
+                if (logger.isErrorEnabled()) {
+                    logger.error(error, e);
+                }
+            }
+
+            if (!pointProcessorErrorPublisherService.publishErrorEvent(payload, headers, error)) {
+                if (log.isErrorEnabled()) {
+                    log.error("Could not publish transaction processing error");
+                }
+                throw e;
+            }
+
         }
     }
 

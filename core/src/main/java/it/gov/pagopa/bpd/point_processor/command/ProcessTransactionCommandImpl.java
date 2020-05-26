@@ -25,15 +25,11 @@ public class ProcessTransactionCommandImpl extends BaseProcessTransactionCommand
     public ProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel,
                                          WinningTransactionConnectorService winningTransactionConnectorService,
                                          AwardPeriodConnectorService awardPeriodConnectorService,
-                                         PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
-                                         ObjectMapper objectMapper,
                                          BeanFactory beanFactory,
                                          TransactionMapper transactionMapper){
         super(processTransactionCommandModel,
               winningTransactionConnectorService,
               awardPeriodConnectorService,
-              pointProcessorErrorPublisherService,
-              objectMapper,
               beanFactory,
               transactionMapper);
     }
