@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.point_processor.model.entity;
+package it.gov.pagopa.bpd.point_processor.connector.jpa.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

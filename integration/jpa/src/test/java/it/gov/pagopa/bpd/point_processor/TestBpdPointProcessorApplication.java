@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd;
+package it.gov.pagopa.bpd.point_processor;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

@@ -2,16 +2,15 @@ package it.gov.pagopa.bpd.point_processor.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
-import eu.sia.meda.connector.jpa.JPAConnectorImpl;
 import eu.sia.meda.event.service.ErrorPublisherService;
 import eu.sia.meda.eventlistener.BaseEventListenerIntegrationTest;
-import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.MCC_CategoryDAO;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.model.MCC_Category;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
-import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.ScoreMultiplierService;
@@ -29,12 +28,12 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration;
 import org.springframework.test.context.ContextConfiguration;
@@ -54,10 +53,6 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
  */
 
 @EnableConfigurationProperties
-@EnableJpaRepositories(
-        repositoryBaseClass = JPAConnectorImpl.class,
-        basePackages = {"it.gov.pagopa.bpd"}
-)
 @ContextConfiguration(initializers = OnTransactionProcessRequestListenerIntegrationTest.RandomPortInitializer.class,
         classes = {
                 TestConfig.class,
@@ -74,14 +69,13 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
                 "classpath:config/testPointProcessorErrorPublisher.properties"
         },
         properties = {
-                "connectors.jpaConfigurations.connection.mocked:true",
-                "connectors.jpaConfigurations.connection.path:postgres/",
                 "spring.main.allow-bean-definition-overriding=true",
                 "listeners.eventConfigurations.items.OnTransactionProcessRequestListener.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "connectors.eventConfigurations.items.PointProcessorErrorPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "point-processor.mcc-score-multiplier.0000=0.10",
 
         })
+@AutoConfigureTestDatabase
 public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEventListenerIntegrationTest {
 
     @ClassRule

@@ -1,8 +1,8 @@
 package it.gov.pagopa.bpd.point_processor.service;
 
 import eu.sia.meda.BaseTest;
-import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
-import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.MCC_CategoryDAO;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.model.MCC_Category;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;

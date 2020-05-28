@@ -1,7 +1,7 @@
-package it.gov.pagopa.bpd.point_processor;
+package it.gov.pagopa.bpd.point_processor.connector.jpa;
 
-import eu.sia.meda.connector.jpa.CrudJpaDAO;
-import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
+import it.gov.pagopa.bpd.common.connector.jpa.CrudJpaDAO;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.model.MCC_Category;
 import org.springframework.stereotype.Repository;
 
 /**

@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.point_processor.service;
 
-import it.gov.pagopa.bpd.point_processor.MCC_CategoryDAO;
-import it.gov.pagopa.bpd.point_processor.model.entity.MCC_Category;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.MCC_CategoryDAO;
+import it.gov.pagopa.bpd.point_processor.connector.jpa.model.MCC_Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
