@@ -7,6 +7,7 @@ trigger:
     include:
       - master
       - develop
+      - release/*
       - features/*
   paths:
     include:
@@ -54,8 +55,12 @@ stages:
           - task: Maven@3
             inputs:
               mavenPomFile: 'pom.xml'
-              goals: 'package'
-              options: '-B -s $(settingsxml.secureFilePath) -Dmaven.test.skip=true'
+              goals: 'deploy'
+              options: '-B -s $(settingsxml.secureFilePath)'
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              codeCoverageToolOption: 'JaCoCo'
+              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.8'
               mavenVersionOption: 'Default'
