@@ -15,7 +15,19 @@ spec:
           ports:
             - containerPort: 8080
           envFrom:
+            - secretRef:
+                name: bpdmspointprocessor
+            - configMapRef:
+                name: bpdmspointprocessor
+            - secretRef:
+                name: postgres-credentials
             - configMapRef:
                 name: eventhub-logging
             - configMapRef:
+                name: eventhub-common
+            - configMapRef:
                 name: rest-client
+      hostAliases:
+        - hostnames:
+            - bpd-hub-dev.servicebus.windows.net
+          ip: 10.70.5.9
