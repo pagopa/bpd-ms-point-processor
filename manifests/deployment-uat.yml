@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: bpdmspointprocessor
-          image: cstarregistry.azurecr.io/bpdmspointprocessor
+          image: cstarregistry.azurecr.io/bpdmspointprocessor-uat
           ports:
             - containerPort: 8080
           envFrom:
@@ -30,4 +30,4 @@ spec:
       hostAliases:
         - hostnames:
             - bpd-hub-dev.servicebus.windows.net
-          ip: 10.70.5.9
+          ip: 10.70.5.10
