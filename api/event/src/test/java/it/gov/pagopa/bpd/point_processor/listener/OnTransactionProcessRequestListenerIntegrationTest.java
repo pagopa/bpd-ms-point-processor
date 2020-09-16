@@ -174,7 +174,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
         return WinningTransaction.builder()
                 .idTrxAcquirer("1")
                 .acquirerCode("001")
-                .trxDate(OffsetDateTime.parse("2020-04-10T16:59:59.245+02:00"))
+                .trxDate(OffsetDateTime.parse("2020-04-10T16:59:59.245Z"))
                 .amount(BigDecimal.valueOf(100))
                 .operationType(OperationType.PAGAMENTO)
                 .hpan("test")
@@ -208,13 +208,12 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
         try {
 
             Transaction sentTransaction = (Transaction) getRequestObject();
-            WinningTransaction savedTransaction = (WinningTransaction) getSentData();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(LocalDate.now()));
             BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
                     .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
             BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(savedTransaction));
+                    .saveWinningTransaction(Mockito.any());
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceSpy);
 
         } catch (Exception e) {
