@@ -29,10 +29,16 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
 
     @ClassRule
-    public static WireMockClassRule wireMockRule = new WireMockClassRule(wireMockConfig()
-            .dynamicPort()
-            .usingFilesUnderClasspath("stubs/winning-transaction")
-    );
+    public static WireMockClassRule wireMockRule;
+
+    static {
+        String port = System.getenv("WiremockPort");
+        wireMockRule = new WireMockClassRule(wireMockConfig()
+                .port(port != null ? Integer.parseInt(port) : 0)
+                .bindAddress("localhost")
+                .usingFilesUnderClasspath("stubs/winning-transaction")
+        );
+    }
 
     @Test
     public void saveWinningTransaction_Ok() {

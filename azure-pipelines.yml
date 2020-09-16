@@ -22,6 +22,9 @@ resources:
 
 variables:
 
+  # Wiremock Port
+  WiremockPort: '8080'
+
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '1b7900a3-6e8a-403a-b6ce-349854a5c6b8'
   containerRegistry: 'cstarregistry.azurecr.io'
@@ -64,10 +67,10 @@ stages:
               mavenPomFile: 'pom.xml'
               goals: 'deploy'
               options: '-B -s $(settingsxml.secureFilePath) -Dmaven.test.skip=true'
-              #              publishJUnitResults: true
-              #              testResultsFiles: '**/surefire-reports/TEST-*.xml'
-              #              codeCoverageToolOption: 'JaCoCo'
-              #              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
+              publishJUnitResults: true
+              testResultsFiles: '**/surefire-reports/TEST-*.xml'
+              codeCoverageToolOption: 'JaCoCo'
+              codeCoverageClassFilter: '+:it.gov.pagopa.**,-:**.*Config,-:**.model.**,-:**.enums.**,-:**.*Constants,-:**.*Application,-:**.*Test,-:**.*Test.**'
               javaHomeOption: 'JDKVersion'
               jdkVersionOption: '1.8'
               mavenVersionOption: 'Default'

@@ -27,10 +27,16 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 public class AwardPeriodRestClientTest extends BaseFeignRestClientTest {
 
     @ClassRule
-    public static WireMockClassRule wireMockRule = new WireMockClassRule(wireMockConfig()
-            .dynamicPort()
-            .usingFilesUnderClasspath("stubs/award-period")
-    );
+    public static WireMockClassRule wireMockRule;
+
+    static {
+        String port = System.getenv("WiremockPort");
+        wireMockRule = new WireMockClassRule(wireMockConfig()
+                .port(port != null ? Integer.parseInt(port) : 0)
+                .bindAddress("localhost")
+                .usingFilesUnderClasspath("stubs/award-period")
+        );
+    }
 
     @Test
     public void getAwardPeriods_Ok_NotEmpty() {

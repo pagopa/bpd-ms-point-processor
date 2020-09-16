@@ -79,16 +79,16 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEventListenerIntegrationTest {
 
     @ClassRule
-    public static WireMockClassRule wireMockRuleAwdPeriod = new WireMockClassRule(wireMockConfig()
-            .dynamicPort()
-            .usingFilesUnderClasspath("stubs/award-period")
-    );
+    public static WireMockClassRule wireMockRule;
 
-    @ClassRule
-    public static WireMockClassRule wireMockRuleTrx = new WireMockClassRule(wireMockConfig()
-            .dynamicPort()
-            .usingFilesUnderClasspath("stubs/winning-transaction")
-    );
+    static {
+        String port = System.getenv("WiremockPort");
+        wireMockRule = new WireMockClassRule(wireMockConfig()
+                .port(port != null ? Integer.parseInt(port) : 0)
+                .bindAddress("localhost")
+                .usingFilesUnderClasspath("stubs/award-period")
+        );
+    }
 
     @Override
     protected Object getRequestObject() {
@@ -161,11 +161,11 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
             TestPropertySourceUtils
                     .addInlinedPropertiesToEnvironment(applicationContext,
                             String.format("rest-client.award-period.base-url=http://%s:%d/bpd/award-periods",
-                                    wireMockRuleAwdPeriod.getOptions().bindAddress(),
-                                    wireMockRuleAwdPeriod.port()),
+                                    wireMockRule.getOptions().bindAddress(),
+                                    wireMockRule.port()),
                             String.format("rest-client.winning-transaction.base-url=http://%s:%d/bpd/winning-transactions",
-                                    wireMockRuleTrx.getOptions().bindAddress(),
-                                    wireMockRuleTrx.port())
+                                    wireMockRule.getOptions().bindAddress(),
+                                    wireMockRule.port())
                     );
         }
     }
