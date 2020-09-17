@@ -30,7 +30,7 @@ public class AwardPeriodRestClientTest extends BaseFeignRestClientTest {
     public static WireMockClassRule wireMockRule;
 
     static {
-        String port = System.getenv("WiremockPort");
+        String port = System.getenv("WIREMOCKPORT");
         wireMockRule = new WireMockClassRule(wireMockConfig()
                 .port(port != null ? Integer.parseInt(port) : 0)
                 .bindAddress("localhost")
