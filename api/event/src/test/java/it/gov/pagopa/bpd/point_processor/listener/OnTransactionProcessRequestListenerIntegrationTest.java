@@ -69,6 +69,7 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
                 "classpath:config/testPointProcessorErrorPublisher.properties"
         },
         properties = {
+                "logging.level.it.gov.pagopa.bpd.point_processor=DEBUG",
                 "spring.main.allow-bean-definition-overriding=true",
                 "listeners.eventConfigurations.items.OnTransactionProcessRequestListener.bootstrapServers=${spring.embedded.kafka.brokers}",
                 "connectors.eventConfigurations.items.PointProcessorErrorPublisherConnector.bootstrapServers=${spring.embedded.kafka.brokers}",
