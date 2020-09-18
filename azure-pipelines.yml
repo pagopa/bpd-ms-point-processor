@@ -22,6 +22,8 @@ resources:
 
 variables:
 
+  TZ: 'Europe/Rome'
+
   # Wiremock Port
   WiremockPort: '8080'
 
