@@ -4,6 +4,9 @@ metadata:
   name: bpdmspointprocessor
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: bpdmspointprocessor
   template:
     metadata:
       labels:
@@ -11,7 +14,7 @@ spec:
     spec:
       containers:
         - name: bpdmspointprocessor
-          image: cstarregistry.azurecr.io/bpdmspointprocessor-uat
+          image: cstaruatregistry.azurecr.io/bpdmspointprocessor
           ports:
             - containerPort: 8080
           envFrom:
@@ -29,5 +32,5 @@ spec:
                 name: rest-client
       hostAliases:
         - hostnames:
-            - bpd-hub-dev.servicebus.windows.net
-          ip: 10.70.5.10
+            - bpd-event-uat.servicebus.windows.net
+          ip: 10.70.67.5

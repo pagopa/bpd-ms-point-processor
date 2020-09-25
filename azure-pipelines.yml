@@ -27,26 +27,26 @@ variables:
   # Wiremock Port
   WiremockPort: '8080'
 
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '1b7900a3-6e8a-403a-b6ce-349854a5c6b8'
-  containerRegistry: 'cstarregistry.azurecr.io'
-  dockerfileRelativePath: 'Dockerfile'
-  tag: '$(Build.BuildId)'
-  imagePullSecret: 'cstarregistry-auth'
+  # Image Repository Name
+  imageRepository: 'bpdmspointprocessor'
 
-  # Agent VM image name
-  vmImageName: 'ubuntu-latest'
 
   isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))]
+  isSIT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/st')]
+  isUAT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/uat')]
 
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/st') }}:
-    devOpsEnv: 'pagopabpdmspointprocessor.bpd-test'
+  ${{ if eq(variables.isSIT, true) }}:
+    dockerRegistryServiceConnection: 'cstarregistry-connection'
+    containerRegistry: 'cstarregistry.azurecr.io'
     deployment: deployment-sit
-    imageRepository: 'bpdmspointprocessor-sit'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/uat') }}:
-    devOpsEnv: 'pagopabpdmspointprocessor.bpd-uat'
+    imagePullSecret: 'cstarregistry-auth'
+  ${{ if eq(variables.isUAT, true) }}:
+    dockerRegistryServiceConnection: 'cstaruatregistry-connection'
+    containerRegistry: 'cstaruatregistry.azurecr.io'
     deployment: deployment-uat
-    imageRepository: 'bpdmspointprocessor-uat'
+    imagePullSecret: 'cstaruatregistry-auth'
+  ${{ if and(ne(variables.isSIT, true), ne(variables.isUAT, true)) }}:
+    dockerRegistryServiceConnection: 'cstarregistry-connection'
 
 
 stages:
@@ -56,7 +56,8 @@ stages:
       - job: Build
         displayName: Build
         pool:
-          vmImage: $(vmImageName)
+          vmImage: $(vmImageNameDefault)
+
         steps:
           - task: DownloadSecureFile@1
             displayName: 'download settings.xml for Maven'
@@ -89,7 +90,9 @@ stages:
               command: 'buildAndPush'
               Dockerfile: '$(Build.Repository.LocalPath)/$(dockerfileRelativePath)'
               buildContext: '$(Build.Repository.LocalPath)'
-              tags: '$(tag)'
+              tags: |
+                $(Build.BuildId)
+                latest
           - task: PublishPipelineArtifact@1
             displayName: 'Publish Atrifact manifests'
             condition: and(succeeded(), eq(variables.isToDeploy, true))
@@ -102,12 +105,38 @@ stages:
     displayName: Deploy stage
     dependsOn: Build
     condition: and(succeeded(), eq(variables.isToDeploy, true))
+
     jobs:
-      - deployment: Deploy
-        displayName: Deploy
+      - deployment: Deploy1
+        displayName: Deploy SIT
+        condition: eq(variables.isSIT, true)
         pool:
-          vmImage: $(vmImageName)
-        environment: '$(devOpsEnv)'
+          vmImage: $(vmImageNameDefault)
+        environment: 'sit.bpd-test'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: KubernetesManifest@0
+                  displayName: Deploy to Kubernetes cluster
+                  inputs:
+                    action: deploy
+                    manifests: |
+                      $(Pipeline.Workspace)/manifests/$(deployment).yml
+                      $(Pipeline.Workspace)/manifests/service.yml
+                    imagePullSecrets: |
+                      $(imagePullSecret)
+                    containers: |
+                      $(containerRegistry)/$(imageRepository):$(Build.BuildId)
+
+      - deployment: Deploy2
+        displayName: Deploy UAT
+        condition: eq(variables.isUAT, true)
+        pool:
+          name: uat_agent_pool
+          demands:
+            - agent.name -equals ddsrpst01
+        environment: 'uat'
         strategy:
           runOnce:
             deploy:
@@ -121,11 +150,11 @@ stages:
                 - task: KubernetesManifest@0
                   displayName: Deploy to Kubernetes cluster
                   inputs:
-                    action: deploy
+                    action: 'deploy'
+                    kubernetesServiceConnection: 'ddsakstest-self-connection-bpd-uat'
+                    namespace: 'bpd-uat'
                     manifests: |
                       $(Pipeline.Workspace)/manifests/$(deployment).yml
                       $(Pipeline.Workspace)/manifests/service.yml
-                    imagePullSecrets: |
-                      $(imagePullSecret)
-                    containers: |
-                      $(containerRegistry)/$(imageRepository):$(tag)
+                    containers: '$(containerRegistry)/$(imageRepository):$(Build.BuildId)'
+                    imagePullSecrets: '$(imagePullSecret)'

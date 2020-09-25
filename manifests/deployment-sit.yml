@@ -11,7 +11,7 @@ spec:
     spec:
       containers:
         - name: bpdmspointprocessor
-          image: cstarregistry.azurecr.io/bpdmspointprocessor-sit
+          image: cstarregistry.azurecr.io/bpdmspointprocessor
           ports:
             - containerPort: 8080
           envFrom:
