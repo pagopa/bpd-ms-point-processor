@@ -41,6 +41,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.support.TestPropertySourceUtils;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.List;
@@ -133,11 +134,6 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     @SpyBean
     ProcessTransactionCommandModelFactory processTransactionCommandModelFactory;
 
-//    @SpyBean
-//    AwardPeriodRestClient awardPeriodRestClientSpy;
-//
-//    @SpyBean
-//    WinningTransactionRestClient winningTransactionRestClient;
 
     @Autowired
     ObjectMapper objectMapper;
@@ -222,6 +218,11 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
             Assert.fail();
         }
 
+    }
+
+    @Override
+    protected Duration getTimeout() {
+        return Duration.ofMillis(10000L);
     }
 
 }
