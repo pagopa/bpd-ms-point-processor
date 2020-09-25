@@ -27,6 +27,11 @@ variables:
   # Wiremock Port
   WiremockPort: '8080'
 
+  dockerfileRelativePath: 'Dockerfile'
+
+  # Agent VM image name for Build
+  vmImageNameDefault: 'ubuntu-latest'
+
   # Image Repository Name
   imageRepository: 'bpdmspointprocessor'
 
