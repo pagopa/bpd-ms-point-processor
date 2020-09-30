@@ -26,8 +26,6 @@ import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.boot.autoconfigure.kafka.KafkaAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.cloud.openfeign.FeignAutoConfiguration;
 import org.springframework.context.ApplicationContextInitializer;
@@ -75,7 +73,6 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
                 "point-processor.mcc-score-multiplier.0000=0.10",
 
         })
-@AutoConfigureTestDatabase
 public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEventListenerIntegrationTest {
 
     @ClassRule
