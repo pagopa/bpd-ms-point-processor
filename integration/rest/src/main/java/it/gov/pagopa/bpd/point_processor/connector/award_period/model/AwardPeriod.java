@@ -19,5 +19,6 @@ public class AwardPeriod {
     private LocalDate startDate;
     private LocalDate endDate;
     private Integer gracePeriod;
+    private Integer maxTransactionCashback;
 
 }

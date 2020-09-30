@@ -92,7 +92,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             }
 
             RuleEngineExecutionCommand ruleEngineExecutionCommand =
-                    beanFactory.getBean(RuleEngineExecutionCommand.class, transaction);
+                    beanFactory.getBean(RuleEngineExecutionCommand.class, transaction, awardPeriod);
 
             BigDecimal awardScore = ruleEngineExecutionCommand.execute();
 

@@ -2,12 +2,12 @@ package it.gov.pagopa.bpd.point_processor.command;
 
 import eu.sia.meda.core.command.BaseCommand;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
+import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import it.gov.pagopa.bpd.point_processor.service.ScoreMultiplierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
-
 import java.math.BigDecimal;
 
 /**
@@ -18,21 +18,26 @@ import java.math.BigDecimal;
 class BaseRuleEngineExecutionCommandImpl extends BaseCommand<BigDecimal> implements RuleEngineExecutionCommand {
 
     private final Transaction transaction;
+    private final AwardPeriod awardPeriod;
     private ScoreMultiplierService scoreMultiplierService;
 
-    public BaseRuleEngineExecutionCommandImpl(Transaction transaction){
+    public BaseRuleEngineExecutionCommandImpl(
+            Transaction transaction, AwardPeriod awardPeriod){
         this.transaction = transaction;
+        this.awardPeriod = awardPeriod;
     }
 
-    public BaseRuleEngineExecutionCommandImpl(Transaction transaction, ScoreMultiplierService scoreMultiplierService) {
+    public BaseRuleEngineExecutionCommandImpl(
+            Transaction transaction, AwardPeriod awardPeriod, ScoreMultiplierService scoreMultiplierService){
         this.transaction = transaction;
+        this.awardPeriod = awardPeriod;
         this.scoreMultiplierService = scoreMultiplierService;
     }
 
     @Override
     public BigDecimal doExecute() {
-        BigDecimal scoreMultiplier = scoreMultiplierService.getScoreMultiplier(transaction.getMcc());
-        BigDecimal awardScore = scoreMultiplier.multiply(transaction.getAmount());
+        BigDecimal awardScore = scoreMultiplierService.getScoreMultiplier().multiply(transaction.getAmount())
+                .min(BigDecimal.valueOf(awardPeriod.getMaxTransactionCashback()));
         return "01".equals(transaction.getOperationType()) ? awardScore.negate() : awardScore;
     }
 

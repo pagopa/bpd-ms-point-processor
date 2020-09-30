@@ -6,8 +6,6 @@ import eu.sia.meda.event.service.ErrorPublisherService;
 import eu.sia.meda.eventlistener.BaseEventListenerIntegrationTest;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.config.TestConfig;
-import it.gov.pagopa.bpd.point_processor.connector.jpa.MCC_CategoryDAO;
-import it.gov.pagopa.bpd.point_processor.connector.jpa.model.MCC_Category;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.factory.ProcessTransactionCommandModelFactory;
@@ -138,18 +136,9 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
     @Autowired
     ObjectMapper objectMapper;
 
-    @MockBean
-    MCC_CategoryDAO mcc_categoryDAOMock;
 
     @Before
-    public void setUp() {
-        MCC_Category mcc_category = new MCC_Category();
-        mcc_category.setMccCategoryId("0");
-        mcc_category.setMultiplierScore(BigDecimal.valueOf(0.10));
-        mcc_category.setMccCategoryDescription("test");
-        BDDMockito.doReturn(mcc_category).when(mcc_categoryDAOMock)
-                .findByMerchantCategoryCodes_Mcc(Mockito.eq("0000"));
-    }
+    public void setUp() {}
 
     public static class RandomPortInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
         @SneakyThrows
@@ -204,11 +193,10 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
 
         try {
 
-            Transaction sentTransaction = (Transaction) getRequestObject();
             BDDMockito.verify(awardPeriodConnectorServiceSpy, Mockito.atLeastOnce())
                     .getAwardPeriod(Mockito.eq(LocalDate.now()));
             BDDMockito.verify(scoreMultiplierService, Mockito.atLeastOnce())
-                    .getScoreMultiplier(Mockito.eq(sentTransaction.getMcc()));
+                    .getScoreMultiplier();
             BDDMockito.verify(winningTransactionConnectorServiceSpy, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.any());
             BDDMockito.verifyZeroInteractions(pointProcessorErrorPublisherServiceSpy);
