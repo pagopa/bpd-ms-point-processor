@@ -158,7 +158,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
         Transaction transaction = getCommandModel();
         WinningTransaction winningTransaction = getSaveModel();
-        winningTransaction.setScore(BigDecimal.valueOf(-1));
+        winningTransaction.setCashback(BigDecimal.valueOf(-1));
         BDDMockito.doReturn(getSaveModel()).when(winningTransactionConnectorServiceMock)
                 .saveWinningTransaction(Mockito.eq(getSaveModel()));
 
@@ -312,7 +312,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
-                .score(BigDecimal.ONE)
+                .cashback(BigDecimal.ONE)
                 .build();
     }
 

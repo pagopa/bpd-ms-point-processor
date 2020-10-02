@@ -99,7 +99,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             if (awardScore.doubleValue() != 0) {
                 WinningTransaction winningTransaction = transactionMapper.map(transaction);
                 winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-                winningTransaction.setScore(awardScore);
+                winningTransaction.setCashback(awardScore);
                 winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
             }
 

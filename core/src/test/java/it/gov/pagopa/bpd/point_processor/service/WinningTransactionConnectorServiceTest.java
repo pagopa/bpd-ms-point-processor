@@ -91,7 +91,7 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
-                .score(BigDecimal.ONE)
+                .cashback(BigDecimal.ONE)
                 .build();
     }
 
