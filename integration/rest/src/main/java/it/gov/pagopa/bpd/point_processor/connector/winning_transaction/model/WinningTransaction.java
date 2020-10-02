@@ -49,8 +49,6 @@ public class WinningTransaction {
     @Pattern(regexp = "[0-9]{2}")
     String circuitType;
 
-    @NotNull
-    @NotBlank
     String idTrxIssuer;
 
     String correlationId;

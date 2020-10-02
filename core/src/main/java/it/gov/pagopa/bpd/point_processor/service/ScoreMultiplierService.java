@@ -4,6 +4,6 @@ import java.math.BigDecimal;
 
 public interface ScoreMultiplierService {
 
-    BigDecimal getScoreMultiplier(String mcc);
+    BigDecimal getScoreMultiplier();
 
 }

@@ -46,7 +46,6 @@ public class Transaction {
     @Size(max = 2)
     String circuitType;
 
-    @NotNull
     String idTrxIssuer;
 
     String correlationId;
