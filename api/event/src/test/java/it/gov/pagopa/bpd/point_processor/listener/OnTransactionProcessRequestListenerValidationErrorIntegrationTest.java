@@ -43,6 +43,8 @@ public class OnTransactionProcessRequestListenerValidationErrorIntegrationTest
                 .amountCurrency("833")
                 .correlationId("1")
                 .acquirerId("0")
+                .bin("000001")
+                .terminalId("0")
                 .build();
     }
 

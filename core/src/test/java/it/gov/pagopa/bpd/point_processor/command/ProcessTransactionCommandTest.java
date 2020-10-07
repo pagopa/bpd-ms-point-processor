@@ -293,6 +293,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .amountCurrency("833")
                 .correlationId("1")
                 .acquirerId("0")
+                .terminalId("0")
+                .bin("000001")
                 .build();
     }
 
@@ -312,6 +314,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
+                .bin("000001")
+                .terminalId("0")
                 .score(BigDecimal.ONE)
                 .build();
     }
