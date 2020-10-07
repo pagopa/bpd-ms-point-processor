@@ -88,6 +88,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(processDateTime);
 
             if (awardPeriod == null) {
+                log.error("No AwardPeriod found");
                 throw new Exception("No AwardPeriod found");
             }
 
@@ -96,12 +97,10 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             BigDecimal awardScore = ruleEngineExecutionCommand.execute();
 
-            if (awardScore.doubleValue() != 0) {
-                WinningTransaction winningTransaction = transactionMapper.map(transaction);
-                winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-                winningTransaction.setScore(awardScore);
-                winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
-            }
+            WinningTransaction winningTransaction = transactionMapper.map(transaction);
+            winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
+            winningTransaction.setScore(awardScore);
+            winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
 
             return true;
 
