@@ -73,26 +73,26 @@ public class RuleEngineExecutionCommandTest extends BaseTest {
 
     }
 
-    @SneakyThrows
-    @Test
-    public void TestExecute_ZeroScore() {
-
-        BDDMockito.doReturn(BigDecimal.valueOf(0D)).when(scoreMultiplierServiceMock).getScoreMultiplier();
-
-        Transaction transaction = getCommandModel();
-        transaction.setOperationType("01");
-
-        RuleEngineExecutionCommand ruleEngineExecutionCommand =
-                new RuleEngineExecutionCommandImpl(
-                        transaction, getAwardPeriod(), scoreMultiplierServiceMock);
-        BigDecimal score = ruleEngineExecutionCommand.execute();
-
-        Assert.assertNotNull(score);
-        Assert.assertEquals(Double.valueOf(0D),Double.valueOf(score.doubleValue()));
-
-        BDDMockito.verify(scoreMultiplierServiceMock).getScoreMultiplier();
-
-    }
+//    @SneakyThrows
+//    @Test
+//    public void TestExecute_ZeroScore() {
+//
+//        BDDMockito.doReturn(BigDecimal.valueOf(0D)).when(scoreMultiplierServiceMock).getScoreMultiplier();
+//
+//        Transaction transaction = getCommandModel();
+//        transaction.setOperationType("01");
+//
+//        RuleEngineExecutionCommand ruleEngineExecutionCommand =
+//                new RuleEngineExecutionCommandImpl(
+//                        transaction, getAwardPeriod(), scoreMultiplierServiceMock);
+//        BigDecimal score = ruleEngineExecutionCommand.execute();
+//
+//        Assert.assertNotNull(score);
+//        Assert.assertEquals(Double.valueOf(0D),Double.valueOf(score.doubleValue()));
+//
+//        BDDMockito.verify(scoreMultiplierServiceMock).getScoreMultiplier();
+//
+//    }
 
     @SneakyThrows
     @Test

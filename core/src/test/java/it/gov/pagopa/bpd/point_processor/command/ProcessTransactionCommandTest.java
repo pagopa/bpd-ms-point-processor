@@ -190,37 +190,37 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
-    @Test
-    public void testExecute_Ok_WinningTransaction_ZeroScore() {
-
-        Transaction transaction = getCommandModel();
-
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-                winningTransactionConnectorServiceMock,
-                awardPeriodConnectorServiceMock,
-                beanFactoryMock,
-                transactionMapperSpy
-        );
-
-        try {
-
-            BDDMockito.doReturn(BigDecimal.ZERO).when(ruleEngineExecutionCommandMock).execute();
-
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertTrue(commandResult);
-
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
-            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-
-    }
+//    @Test
+//    public void testExecute_Ok_WinningTransaction_ZeroScore() {
+//
+//        Transaction transaction = getCommandModel();
+//
+//        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
+//                ProcessTransactionCommandModel.builder().payload(transaction).build(),
+//                winningTransactionConnectorServiceMock,
+//                awardPeriodConnectorServiceMock,
+//                beanFactoryMock,
+//                transactionMapperSpy
+//        );
+//
+//        try {
+//
+//            BDDMockito.doReturn(BigDecimal.ZERO).when(ruleEngineExecutionCommandMock).execute();
+//
+//            Boolean commandResult = processTransactionCommand.execute();
+//            Assert.assertTrue(commandResult);
+//
+//            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
+//                    .getAwardPeriod(Mockito.eq(localDate));
+//            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
+//            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Assert.fail();
+//        }
+//
+//    }
 
     @SneakyThrows
     @Test
