@@ -77,13 +77,4 @@ public class Transaction {
     @NotBlank
     String merchantId;
 
-    @NotBlank
-    @NotNull
-    @Pattern(regexp = "([0-9]{6}|[0-9]{8})")
-    String bin;
-
-    @NotNull
-    @NotBlank
-    String terminalId;
-
 }

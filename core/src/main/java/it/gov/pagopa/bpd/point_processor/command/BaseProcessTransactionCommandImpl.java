@@ -106,7 +106,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             WinningTransaction winningTransaction = transactionMapper.map(transaction);
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-            winningTransaction.setCashback(awardScore);
+            winningTransaction.setScore(awardScore);
 
             logger.info("Saving transaction: {}, {}, {}",
                     transaction.getIdTrxAcquirer(),

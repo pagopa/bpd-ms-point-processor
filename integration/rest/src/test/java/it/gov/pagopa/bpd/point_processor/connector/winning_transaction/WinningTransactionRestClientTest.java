@@ -43,7 +43,6 @@ public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
     @Test
     public void saveWinningTransaction_Ok() {
         WinningTransaction winningTransaction = restClient.saveWinningTransaction(getSaveModel());
-
         Assert.assertNotNull(winningTransaction);
     }
 
@@ -79,7 +78,7 @@ public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
-                .cashback(BigDecimal.ONE)
+                .score(BigDecimal.ONE)
                 .build();
     }
 

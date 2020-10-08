@@ -173,7 +173,7 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .awardPeriodId(1L)
                 .bin("000001")
                 .terminalId("0")
-                .cashback(BigDecimal.valueOf(10D))
+                .score(BigDecimal.valueOf(10D))
                 .build();
     }
 
