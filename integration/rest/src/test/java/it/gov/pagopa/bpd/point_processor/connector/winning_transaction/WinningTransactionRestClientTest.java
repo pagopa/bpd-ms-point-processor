@@ -79,7 +79,7 @@ public class WinningTransactionRestClientTest extends BaseFeignRestClientTest {
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
-                .score(BigDecimal.ONE)
+                .cashback(BigDecimal.ONE)
                 .build();
     }
 

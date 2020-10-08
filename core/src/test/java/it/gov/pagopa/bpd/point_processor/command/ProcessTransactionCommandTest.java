@@ -158,7 +158,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
         Transaction transaction = getCommandModel();
         WinningTransaction winningTransaction = getSaveModel();
-        winningTransaction.setScore(BigDecimal.valueOf(-1));
+        winningTransaction.setCashback(BigDecimal.valueOf(-1));
         BDDMockito.doReturn(getSaveModel()).when(winningTransactionConnectorServiceMock)
                 .saveWinningTransaction(Mockito.eq(getSaveModel()));
 
@@ -189,38 +189,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
         }
 
     }
-
-//    @Test
-//    public void testExecute_Ok_WinningTransaction_ZeroScore() {
-//
-//        Transaction transaction = getCommandModel();
-//
-//        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-//                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-//                winningTransactionConnectorServiceMock,
-//                awardPeriodConnectorServiceMock,
-//                beanFactoryMock,
-//                transactionMapperSpy
-//        );
-//
-//        try {
-//
-//            BDDMockito.doReturn(BigDecimal.ZERO).when(ruleEngineExecutionCommandMock).execute();
-//
-//            Boolean commandResult = processTransactionCommand.execute();
-//            Assert.assertTrue(commandResult);
-//
-//            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-//                    .getAwardPeriod(Mockito.eq(localDate));
-//            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-//            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Assert.fail();
-//        }
-//
-//    }
 
     @SneakyThrows
     @Test
@@ -293,8 +261,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .amountCurrency("833")
                 .correlationId("1")
                 .acquirerId("0")
-                .terminalId("0")
                 .bin("000001")
+                .terminalId("0")
                 .build();
     }
 
@@ -314,9 +282,9 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
+                .cashback(BigDecimal.ONE)
                 .bin("000001")
                 .terminalId("0")
-                .score(BigDecimal.ONE)
                 .build();
     }
 

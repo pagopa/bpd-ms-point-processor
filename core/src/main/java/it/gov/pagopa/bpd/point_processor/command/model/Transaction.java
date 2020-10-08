@@ -64,6 +64,15 @@ public class Transaction {
 
     String acquirerId;
 
+    @NotBlank
+    @NotNull
+    @Pattern(regexp = "([0-9]{6}|[0-9]{8})")
+    String bin;
+
+    @NotNull
+    @NotBlank
+    String terminalId;
+
     @NotNull
     @NotBlank
     String merchantId;

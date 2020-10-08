@@ -63,9 +63,7 @@ public class WinningTransaction {
     @NotBlank
     String mcc;
 
-    String mccDescription;
-
-    BigDecimal score;
+    BigDecimal cashback;
 
     Long awardPeriodId;
 

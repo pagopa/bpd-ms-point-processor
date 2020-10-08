@@ -76,19 +76,26 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
         try {
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("Executing ProcessTransactionCommand for transaction: " +
-                        transaction.getIdTrxAcquirer() + ", " +
-                        transaction.getAcquirerCode() + ", " +
+            logger.info("Executing ProcessTransactionCommand for transaction: {}, {}, {}",
+                        transaction.getIdTrxAcquirer(),
+                        transaction.getAcquirerCode(),
                         transaction.getTrxDate());
-            }
 
             validateRequest(transaction);
 
+            logger.info("Getting award-period: {}, {}, {}",
+                    transaction.getIdTrxAcquirer(),
+                    transaction.getAcquirerCode(),
+                    transaction.getTrxDate());
+
             AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(processDateTime);
 
+            logger.info("Got award-period: {}, {}, {}",
+                    transaction.getIdTrxAcquirer(),
+                    transaction.getAcquirerCode(),
+                    transaction.getTrxDate());
+
             if (awardPeriod == null) {
-                log.error("No AwardPeriod found");
                 throw new Exception("No AwardPeriod found");
             }
 
@@ -99,8 +106,24 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             WinningTransaction winningTransaction = transactionMapper.map(transaction);
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-            winningTransaction.setScore(awardScore);
+            winningTransaction.setCashback(awardScore);
+
+            logger.info("Saving transaction: {}, {}, {}",
+                    transaction.getIdTrxAcquirer(),
+                    transaction.getAcquirerCode(),
+                    transaction.getTrxDate());
+
             winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
+
+            logger.info("Saved transaction: {}, {}, {}",
+                    transaction.getIdTrxAcquirer(),
+                    transaction.getAcquirerCode(),
+                    transaction.getTrxDate());
+
+            logger.info("Executed ProcessTransactionCommand for transaction: {}, {}, {}",
+                    transaction.getIdTrxAcquirer(),
+                    transaction.getAcquirerCode(),
+                    transaction.getTrxDate());
 
             return true;
 
