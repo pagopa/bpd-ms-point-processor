@@ -103,6 +103,8 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .amountCurrency("833")
                 .correlationId("1")
                 .acquirerId("0")
+                .bin("000001")
+                .terminalId("0")
                 .build();
     }
 
@@ -169,6 +171,8 @@ public class OnTransactionProcessRequestListenerIntegrationTest extends BaseEven
                 .correlationId("1")
                 .acquirerId("0")
                 .awardPeriodId(1L)
+                .bin("000001")
+                .terminalId("0")
                 .cashback(BigDecimal.valueOf(10D))
                 .build();
     }

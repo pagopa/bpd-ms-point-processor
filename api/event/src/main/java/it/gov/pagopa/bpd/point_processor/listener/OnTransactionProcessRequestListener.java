@@ -1,6 +1,7 @@
 package it.gov.pagopa.bpd.point_processor.listener;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import eu.sia.meda.eventlistener.BaseConsumerAwareEventListener;
 import eu.sia.meda.eventlistener.BaseEventListener;
 import it.gov.pagopa.bpd.point_processor.command.ProcessTransactionCommand;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
@@ -24,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @Slf4j
-public class OnTransactionProcessRequestListener extends BaseEventListener {
+public class OnTransactionProcessRequestListener extends BaseConsumerAwareEventListener {
 
     private final ModelFactory<Pair<byte[], Headers>, ProcessTransactionCommandModel>
             processTransactionCommandModelModelFactory;

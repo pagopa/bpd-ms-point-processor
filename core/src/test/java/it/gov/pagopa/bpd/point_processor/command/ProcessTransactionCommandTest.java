@@ -190,38 +190,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
-    @Test
-    public void testExecute_Ok_WinningTransaction_ZeroScore() {
-
-        Transaction transaction = getCommandModel();
-
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
-                winningTransactionConnectorServiceMock,
-                awardPeriodConnectorServiceMock,
-                beanFactoryMock,
-                transactionMapperSpy
-        );
-
-        try {
-
-            BDDMockito.doReturn(BigDecimal.ZERO).when(ruleEngineExecutionCommandMock).execute();
-
-            Boolean commandResult = processTransactionCommand.execute();
-            Assert.assertTrue(commandResult);
-
-            BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
-            BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
-            BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Assert.fail();
-        }
-
-    }
-
     @SneakyThrows
     @Test
     public void testExecute_OK_NoAwardPeriod() {
@@ -293,6 +261,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .amountCurrency("833")
                 .correlationId("1")
                 .acquirerId("0")
+                .bin("000001")
+                .terminalId("0")
                 .build();
     }
 
@@ -313,6 +283,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .acquirerId("0")
                 .awardPeriodId(1L)
                 .cashback(BigDecimal.ONE)
+                .bin("000001")
+                .terminalId("0")
                 .build();
     }
 
