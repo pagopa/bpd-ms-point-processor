@@ -1,0 +1,43 @@
+package it.gov.pagopa.bpd.point_processor.listener;
+
+import eu.sia.meda.event.service.ErrorPublisherService;
+import lombok.SneakyThrows;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.junit.Assert;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.List;
+
+/**
+ * Integration Testing class for the whole micro-service, it executes the error flow starting from the
+ * inbound event listener, to the production of a message in the outbound error channel
+ */
+
+public class OnTransactionProcessRequestListenerInvalidPayloadErrorIntegrationTest
+        extends OnTransactionProcessRequestListenerIntegrationTest {
+
+    @Value("${connectors.eventConfigurations.items.PointProcessorErrorPublisherConnector.topic}")
+    private String topicPublished;
+
+    @Override
+    protected Object getRequestObject() {
+        return "unparsable";
+    }
+
+    @Override
+    protected String getTopicPublished() {
+        return topicPublished;
+    }
+
+    @SneakyThrows
+    @Override
+    protected void verifyPublishedMessages(List<ConsumerRecord<String, String>> records) {
+        Assert.assertEquals(1,records.size());
+    }
+
+    @Override
+    protected ErrorPublisherService getErrorPublisherService() {
+        return null;
+    }
+
+}

@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bpdmspointprocessor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: bpdmspointprocessor
+  template:
+    metadata:
+      labels:
+        app: bpdmspointprocessor
+    spec:
+      containers:
+        - name: bpdmspointprocessor
+          image: cstaruatregistry.azurecr.io/bpdmspointprocessor
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: bpdmspointprocessor
+            - configMapRef:
+                name: bpdmspointprocessor
+            - secretRef:
+                name: postgres-credentials
+            - configMapRef:
+                name: eventhub-logging
+            - configMapRef:
+                name: eventhub-common
+            - configMapRef:
+                name: rest-client
+            - configMapRef:
+                name: jvm
+      hostAliases:
+        - hostnames:
+            - bpd-event-uat.servicebus.windows.net
+          ip: 10.70.67.5
