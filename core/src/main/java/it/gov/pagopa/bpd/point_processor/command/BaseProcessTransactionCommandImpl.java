@@ -1,11 +1,14 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
 import eu.sia.meda.core.command.BaseCommand;
+import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
+import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
+import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
@@ -39,7 +42,9 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     private static final Validator validator = factory.getValidator();
 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
-    private WinningTransactionConnectorService winningTransactionConnectorService;
+    private SaveTransactionPublisherConnector saveTransactionPublisherConnector;
+    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
+    private SimpleEventResponseTransformer simpleEventResponseTransformer;
     private AwardPeriodConnectorService awardPeriodConnectorService;
     private BeanFactory beanFactory;
     private TransactionMapper transactionMapper;
@@ -51,13 +56,13 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     }
 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel,
-                                             WinningTransactionConnectorService winningTransactionConnectorService,
+                                             SaveTransactionPublisherConnector saveTransactionPublisherConnector,
                                              AwardPeriodConnectorService awardPeriodConnectorService,
                                              BeanFactory beanFactory,
                                              TransactionMapper transactionMapper) {
         this.processTransactionCommandModel = processTransactionCommandModel;
         this.processDateTime = LocalDate.now();
-        this.winningTransactionConnectorService = winningTransactionConnectorService;
+        this.saveTransactionPublisherConnector = saveTransactionPublisherConnector;
         this.awardPeriodConnectorService = awardPeriodConnectorService;
         this.beanFactory = beanFactory;
         this.transactionMapper = transactionMapper;
@@ -92,7 +97,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             OffsetDateTime awrd_prd_end = OffsetDateTime.now();
 
             log.info("Executed getAwardPeriod for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}" ,
+                            "- Started at {}, Ended at {} - Total exec time: {}",
                     transaction.getIdTrxAcquirer(),
                     transaction.getAcquirerCode(),
                     transaction.getTrxDate(),
@@ -116,12 +121,14 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             OffsetDateTime save_start = OffsetDateTime.now();
 
-            winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
+            saveTransactionPublisherConnector.doCall(winningTransaction,
+                    simpleEventRequestTransformer,
+                    simpleEventResponseTransformer);
 
             OffsetDateTime save_end = OffsetDateTime.now();
 
-            log.info("Executed saveWinningTransaction for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}" ,
+            log.info("Executed publishing WinningTransaction for transaction: {}, {}, {} " +
+                            "- Started at {}, Ended at {} - Total exec time: {}",
                     transaction.getIdTrxAcquirer(),
                     transaction.getAcquirerCode(),
                     transaction.getTrxDate(),
@@ -133,7 +140,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             OffsetDateTime end_exec = OffsetDateTime.now();
 
             log.info("Executed ProcessTransactionCommand for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}" ,
+                            "- Started at {}, Ended at {} - Total exec time: {}",
                     transaction.getIdTrxAcquirer(),
                     transaction.getAcquirerCode(),
                     transaction.getTrxDate(),
@@ -165,8 +172,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
     @Autowired
     public void setWinningTransactionConnectorService(
-            WinningTransactionConnectorService winningTransactionConnectorService) {
-        this.winningTransactionConnectorService = winningTransactionConnectorService;
+            SaveTransactionPublisherConnector saveTransactionPublisherConnector) {
+        this.saveTransactionPublisherConnector = saveTransactionPublisherConnector;
     }
 
     @Autowired
@@ -182,6 +189,16 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     @Autowired
     public void setTransactionMapper(TransactionMapper transactionMapper) {
         this.transactionMapper = transactionMapper;
+    }
+
+    @Autowired
+    public void setSimpleEventRequestTransformer(SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer) {
+        this.simpleEventRequestTransformer = simpleEventRequestTransformer;
+    }
+
+    @Autowired
+    public void setSimpleEventResponseTransformer(SimpleEventResponseTransformer simpleEventResponseTransformer) {
+        this.simpleEventResponseTransformer = simpleEventResponseTransformer;
     }
 
     /**

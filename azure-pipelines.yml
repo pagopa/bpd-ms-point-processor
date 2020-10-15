@@ -36,9 +36,9 @@ variables:
   imageRepository: 'bpdmspointprocessor'
 
 
-  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/release')))]
+  isToDeploy: $[and(ne(variables['Build.Reason'], 'PullRequest'), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'), startsWith(variables['Build.SourceBranch'], 'refs/heads/refactor')))]
   isSIT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/st')]
-  isUAT: $[eq(variables['Build.SourceBranch'], 'refs/heads/release/uat')]
+  isUAT: $[eq(variables['Build.SourceBranch'], 'refs/heads/refactor/performance')]
   isPROD: $[eq(variables['Build.SourceBranch'], 'refs/heads/master')]
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/st') }}:
@@ -46,7 +46,7 @@ variables:
     containerRegistry: 'cstarregistry.azurecr.io'
     deployment: deployment-sit
     imagePullSecret: 'cstarregistry-auth'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/release/uat') }}:
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/refactor/performance') }}:
     dockerRegistryServiceConnection: 'cstaruatregistry-connection'
     containerRegistry: 'cstaruatregistry.azurecr.io'
     deployment: deployment-uat
@@ -56,7 +56,7 @@ variables:
     containerRegistry: 'cstarprodregistry.azurecr.io'
     deployment: deployment-prod
     imagePullSecret: 'cstarprodregistry-auth'
-  ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/release/st'), ne(variables['Build.SourceBranch'], 'refs/heads/release/uat'), ne(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
+  ${{ if and(ne(variables['Build.SourceBranch'], 'refs/heads/release/st'), ne(variables['Build.SourceBranch'], 'refs/heads/refactor/performance'), ne(variables['Build.SourceBranch'], 'refs/heads/master')) }}:
     dockerRegistryServiceConnection: 'cstarregistry-connection'
 
 

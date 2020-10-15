@@ -1,6 +1,6 @@
-package it.gov.pagopa.bpd.point_processor.config;
+package it.gov.pagopa.bpd.point_processor.publisher.config;
 
-import it.gov.pagopa.bpd.point_processor.PointProcessorErrorPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.publisher.PointProcessorErrorPublisherConnector;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
