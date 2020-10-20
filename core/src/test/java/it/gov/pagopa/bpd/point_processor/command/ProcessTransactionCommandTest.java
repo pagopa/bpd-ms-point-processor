@@ -4,9 +4,9 @@ import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
+import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
@@ -68,7 +68,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
     public void testExecute_Ok_WinningTransaction() {
 
         Transaction transaction = getCommandModel();
-        BDDMockito.doReturn(getSaveModel()).when(winningTransactionConnectorServiceMock)
+        BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
                 .saveWinningTransaction(Mockito.eq(getSaveModel()));
 
         ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
@@ -159,7 +159,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         Transaction transaction = getCommandModel();
         WinningTransaction winningTransaction = getSaveModel();
         winningTransaction.setScore(BigDecimal.valueOf(-1));
-        BDDMockito.doReturn(getSaveModel()).when(winningTransactionConnectorServiceMock)
+        BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
                 .saveWinningTransaction(Mockito.eq(getSaveModel()));
 
         ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
