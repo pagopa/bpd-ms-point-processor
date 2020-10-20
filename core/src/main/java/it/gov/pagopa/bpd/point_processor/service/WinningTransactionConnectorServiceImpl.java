@@ -1,7 +1,9 @@
 package it.gov.pagopa.bpd.point_processor.service;
 
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
+import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
+import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,15 +16,24 @@ import org.springframework.stereotype.Service;
 @Slf4j
 class WinningTransactionConnectorServiceImpl implements WinningTransactionConnectorService {
 
-    private WinningTransactionRestClient winningTransactionRestClient;
+    private final SaveTransactionPublisherConnector saveTransactionPublisherConnector;
+    private final SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
+    private final SimpleEventResponseTransformer simpleEventResponseTransformer;
+
 
     @Autowired
-    public WinningTransactionConnectorServiceImpl(WinningTransactionRestClient winningTransactionRestClient) {
-        this.winningTransactionRestClient = winningTransactionRestClient;
+    public WinningTransactionConnectorServiceImpl(
+            SaveTransactionPublisherConnector saveTransactionPublisherConnector,
+            SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer,
+            SimpleEventResponseTransformer simpleEventResponseTransformer) {
+        this.saveTransactionPublisherConnector = saveTransactionPublisherConnector;
+        this.simpleEventRequestTransformer = simpleEventRequestTransformer;
+        this.simpleEventResponseTransformer = simpleEventResponseTransformer;
     }
 
     @Override
-    public WinningTransaction saveWinningTransaction(WinningTransaction winningTransaction) {
-        return winningTransactionRestClient.saveWinningTransaction(winningTransaction);
+    public void saveWinningTransaction(WinningTransaction winningTransaction) {
+        saveTransactionPublisherConnector.doCall(winningTransaction,
+                simpleEventRequestTransformer, simpleEventResponseTransformer);
     }
 }

@@ -1,9 +1,11 @@
 package it.gov.pagopa.bpd.point_processor.service;
 
 import eu.sia.meda.BaseTest;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
+import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
+import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
+import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -12,6 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -22,18 +25,27 @@ import java.time.OffsetDateTime;
 public class WinningTransactionConnectorServiceTest extends BaseTest {
 
     @Mock
-    private WinningTransactionRestClient winningTransactionRestClientMock;
+    private SaveTransactionPublisherConnector saveTransactionPublisherConnector;
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     private WinningTransactionConnectorService winningTransactionConnectorService;
 
+    @SpyBean
+    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformerSpy;
+
+    @SpyBean
+    private SimpleEventResponseTransformer simpleEventResponseTransformerSpy;
+
     @Before
     public void initTest() {
-        Mockito.reset(winningTransactionRestClientMock);
+        Mockito.reset(saveTransactionPublisherConnector);
         winningTransactionConnectorService =
-                new WinningTransactionConnectorServiceImpl(winningTransactionRestClientMock);
+                new WinningTransactionConnectorServiceImpl(
+                        saveTransactionPublisherConnector,
+                        simpleEventRequestTransformerSpy,
+                        simpleEventResponseTransformerSpy);
     }
 
     @Test
@@ -41,16 +53,14 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
 
         try {
 
-            BDDMockito.doReturn(getSaveModel())
-                    .when(winningTransactionRestClientMock)
-                    .saveWinningTransaction(Mockito.eq(getSaveModel()));
+            BDDMockito.doReturn(true)
+                    .when(saveTransactionPublisherConnector)
+                    .doCall(Mockito.eq(getSaveModel()),Mockito.any(),Mockito.any());
 
-            WinningTransaction winningTransaction = winningTransactionConnectorService
-                    .saveWinningTransaction(getSaveModel());
+            winningTransactionConnectorService.saveWinningTransaction(getSaveModel());
 
-            Assert.assertEquals(getSaveModel(), winningTransaction);
-            BDDMockito.verify(winningTransactionRestClientMock, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(getSaveModel()));
+            BDDMockito.verify(saveTransactionPublisherConnector, Mockito.atLeastOnce())
+                    .doCall(Mockito.eq(getSaveModel()),Mockito.any(),Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,15 +74,14 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
 
         BDDMockito.doAnswer(invocationOnMock -> {
             throw new Exception();
-        }).when(winningTransactionRestClientMock)
-          .saveWinningTransaction(Mockito.any());
+        }).when(saveTransactionPublisherConnector)
+          .doCall(Mockito.any(),Mockito.any(),Mockito.any());
 
         expectedException.expect(Exception.class);
         winningTransactionConnectorService.saveWinningTransaction(null);
 
-        BDDMockito.verify(winningTransactionRestClientMock, Mockito.atLeastOnce())
-                .saveWinningTransaction(Mockito.any());
-
+        BDDMockito.verify(saveTransactionPublisherConnector, Mockito.atLeastOnce())
+                .doCall(Mockito.any(),Mockito.any(),Mockito.any());
     }
 
     protected WinningTransaction getSaveModel() {

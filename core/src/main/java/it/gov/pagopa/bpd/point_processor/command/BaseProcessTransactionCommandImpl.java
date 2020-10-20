@@ -42,7 +42,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     private static final Validator validator = factory.getValidator();
 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
-    private SaveTransactionPublisherConnector saveTransactionPublisherConnector;
+    private WinningTransactionConnectorService winningTransactionConnectorService;
     private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
     private SimpleEventResponseTransformer simpleEventResponseTransformer;
     private AwardPeriodConnectorService awardPeriodConnectorService;
@@ -56,13 +56,13 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     }
 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel,
-                                             SaveTransactionPublisherConnector saveTransactionPublisherConnector,
+                                             WinningTransactionConnectorService winningTransactionConnectorService,
                                              AwardPeriodConnectorService awardPeriodConnectorService,
                                              BeanFactory beanFactory,
                                              TransactionMapper transactionMapper) {
         this.processTransactionCommandModel = processTransactionCommandModel;
         this.processDateTime = LocalDate.now();
-        this.saveTransactionPublisherConnector = saveTransactionPublisherConnector;
+        this.winningTransactionConnectorService = winningTransactionConnectorService;
         this.awardPeriodConnectorService = awardPeriodConnectorService;
         this.beanFactory = beanFactory;
         this.transactionMapper = transactionMapper;
@@ -121,9 +121,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             OffsetDateTime save_start = OffsetDateTime.now();
 
-            saveTransactionPublisherConnector.doCall(winningTransaction,
-                    simpleEventRequestTransformer,
-                    simpleEventResponseTransformer);
+            winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
 
             OffsetDateTime save_end = OffsetDateTime.now();
 
@@ -172,8 +170,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
     @Autowired
     public void setWinningTransactionConnectorService(
-            SaveTransactionPublisherConnector saveTransactionPublisherConnector) {
-        this.saveTransactionPublisherConnector = saveTransactionPublisherConnector;
+            WinningTransactionConnectorService winningTransactionConnectorService) {
+        this.winningTransactionConnectorService = winningTransactionConnectorService;
     }
 
     @Autowired
@@ -189,16 +187,6 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     @Autowired
     public void setTransactionMapper(TransactionMapper transactionMapper) {
         this.transactionMapper = transactionMapper;
-    }
-
-    @Autowired
-    public void setSimpleEventRequestTransformer(SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer) {
-        this.simpleEventRequestTransformer = simpleEventRequestTransformer;
-    }
-
-    @Autowired
-    public void setSimpleEventResponseTransformer(SimpleEventResponseTransformer simpleEventResponseTransformer) {
-        this.simpleEventResponseTransformer = simpleEventResponseTransformer;
     }
 
     /**

@@ -1,7 +1,7 @@
 package it.gov.pagopa.bpd.point_processor.service;
 
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 
 /**
  * Service for managing {@link WinningTransaction} data
@@ -12,12 +12,11 @@ public interface WinningTransactionConnectorService {
 
     /**
      * Implementation of {@link WinningTransactionConnectorServiceImpl#saveWinningTransaction(WinningTransaction)},
-     * that contacts the endpoint managed with {@link WinningTransactionRestClient},
+     * that contacts the endpoint managed with {@link SaveTransactionPublisherConnector},
      * for saving a {@link WinningTransaction}
      * @param winningTransaction
      *              {@link WinningTransaction} instance to save
-     * @return instance of {@link WinningTransaction}, resulting from the save operation
      */
-    WinningTransaction saveWinningTransaction(WinningTransaction winningTransaction);
+    void saveWinningTransaction(WinningTransaction winningTransaction);
 
 }
