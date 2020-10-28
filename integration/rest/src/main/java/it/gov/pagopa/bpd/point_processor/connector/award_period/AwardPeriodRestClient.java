@@ -17,7 +17,7 @@ public interface AwardPeriodRestClient {
 
     @GetMapping(value = "${rest-client.award-period.actives.url}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    @Cacheable("awardPeriods")
+    @Cacheable(value = "awardPeriods", key = "#root.method.name")
     List<AwardPeriod> getActiveAwardPeriods();
 
 }
