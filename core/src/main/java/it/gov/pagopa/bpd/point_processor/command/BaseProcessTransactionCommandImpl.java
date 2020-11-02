@@ -1,11 +1,14 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
 import eu.sia.meda.core.command.BaseCommand;
+import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
+import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
+import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
+import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
@@ -40,6 +43,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
     private WinningTransactionConnectorService winningTransactionConnectorService;
+    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
+    private SimpleEventResponseTransformer simpleEventResponseTransformer;
     private AwardPeriodConnectorService awardPeriodConnectorService;
     private BeanFactory beanFactory;
     private TransactionMapper transactionMapper;
@@ -92,7 +97,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             OffsetDateTime awrd_prd_end = OffsetDateTime.now();
 
             log.info("Executed getAwardPeriod for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}" ,
+                            "- Started at {}, Ended at {} - Total exec time: {}",
                     transaction.getIdTrxAcquirer(),
                     transaction.getAcquirerCode(),
                     transaction.getTrxDate(),
@@ -120,8 +125,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             OffsetDateTime save_end = OffsetDateTime.now();
 
-            log.info("Executed saveWinningTransaction for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}" ,
+            log.info("Executed publishing WinningTransaction for transaction: {}, {}, {} " +
+                            "- Started at {}, Ended at {} - Total exec time: {}",
                     transaction.getIdTrxAcquirer(),
                     transaction.getAcquirerCode(),
                     transaction.getTrxDate(),
@@ -133,7 +138,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             OffsetDateTime end_exec = OffsetDateTime.now();
 
             log.info("Executed ProcessTransactionCommand for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}" ,
+                            "- Started at {}, Ended at {} - Total exec time: {}",
                     transaction.getIdTrxAcquirer(),
                     transaction.getAcquirerCode(),
                     transaction.getTrxDate(),

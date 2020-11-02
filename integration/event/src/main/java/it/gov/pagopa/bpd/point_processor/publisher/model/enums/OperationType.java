@@ -1,4 +1,4 @@
-package it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums;
+package it.gov.pagopa.bpd.point_processor.publisher.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;

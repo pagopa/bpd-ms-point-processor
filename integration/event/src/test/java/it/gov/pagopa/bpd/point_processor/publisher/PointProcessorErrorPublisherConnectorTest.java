@@ -1,6 +1,7 @@
-package it.gov.pagopa.bpd.point_processor;
+package it.gov.pagopa.bpd.point_processor.publisher;
 
 import eu.sia.meda.event.BaseEventConnectorTest;
+import it.gov.pagopa.bpd.point_processor.publisher.PointProcessorErrorPublisherConnector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Import;

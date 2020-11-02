@@ -1,6 +1,6 @@
-package it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model;
+package it.gov.pagopa.bpd.point_processor.publisher.model;
 
-import it.gov.pagopa.bpd.point_processor.connector.winning_transaction.model.enums.OperationType;
+import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,7 +13,7 @@ import java.time.OffsetDateTime;
 
 
 /**
- * Resource model for the data recovered through {@link it.gov.pagopa.bpd.point_processor.connector.winning_transaction.WinningTransactionRestClient}
+ * Resource model for the data published through {@link it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector}
  */
 
 

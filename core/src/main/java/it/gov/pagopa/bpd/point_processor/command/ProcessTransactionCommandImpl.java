@@ -1,11 +1,10 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.sia.meda.core.command.Command;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
+import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
-import it.gov.pagopa.bpd.point_processor.service.PointProcessorErrorPublisherService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
@@ -26,7 +25,7 @@ public class ProcessTransactionCommandImpl extends BaseProcessTransactionCommand
                                          WinningTransactionConnectorService winningTransactionConnectorService,
                                          AwardPeriodConnectorService awardPeriodConnectorService,
                                          BeanFactory beanFactory,
-                                         TransactionMapper transactionMapper){
+                                         TransactionMapper transactionMapper) {
         super(processTransactionCommandModel,
               winningTransactionConnectorService,
               awardPeriodConnectorService,
