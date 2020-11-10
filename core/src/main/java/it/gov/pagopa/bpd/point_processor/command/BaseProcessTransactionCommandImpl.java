@@ -7,7 +7,6 @@ import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommand
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
-import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
@@ -92,7 +91,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             OffsetDateTime awrd_prd_start = OffsetDateTime.now();
 
-            AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(processDateTime);
+            AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(processDateTime, transaction.getTrxDate());
 
             OffsetDateTime awrd_prd_end = OffsetDateTime.now();
 

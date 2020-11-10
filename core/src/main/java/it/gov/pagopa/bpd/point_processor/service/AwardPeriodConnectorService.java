@@ -15,10 +15,10 @@ public interface AwardPeriodConnectorService {
 
     /**
      * Method that manages the logic for recovering an AwardPeriod related to the date passed as input
-     * @param accountingDate
-     *              {@link OffsetDateTime} used for searching a {@link AwardPeriod}
+     *
+     * @param accountingDate {@link OffsetDateTime} used for searching a {@link AwardPeriod}
      * @return instance of {@link AwardPeriod} associated to the input param
      */
-    AwardPeriod getAwardPeriod(LocalDate accountingDate);
+    AwardPeriod getAwardPeriod(LocalDate accountingDate, OffsetDateTime trxDate);
 
 }

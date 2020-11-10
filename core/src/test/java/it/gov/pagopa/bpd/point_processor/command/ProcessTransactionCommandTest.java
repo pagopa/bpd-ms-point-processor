@@ -59,9 +59,9 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 beanFactoryMock,
                 transactionMapperSpy);
         BDDMockito.doReturn(ruleEngineExecutionCommandMock).when(beanFactoryMock)
-                .getBean(Mockito.eq(RuleEngineExecutionCommand.class),Mockito.any());
+                .getBean(Mockito.eq(RuleEngineExecutionCommand.class), Mockito.any());
         BDDMockito.doReturn(getAwardPeriod()).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.eq(localDate));
+                .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
     }
 
     @Test
@@ -87,7 +87,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
             Assert.assertTrue(commandResult);
 
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
+                    .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.eq(getSaveModel()));
@@ -178,7 +178,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
             Assert.assertTrue(commandResult);
 
             BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                    .getAwardPeriod(Mockito.eq(localDate));
+                    .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
                     .saveWinningTransaction(Mockito.eq(getSaveModel()));
@@ -206,13 +206,13 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
 
         BDDMockito.doReturn(null).when(awardPeriodConnectorServiceMock)
-                .getAwardPeriod(Mockito.any());
+                .getAwardPeriod(Mockito.any(), Mockito.any());
 
         exceptionRule.expect(Exception.class);
         processTransactionCommand.execute();
 
         BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                .getAwardPeriod(Mockito.eq(localDate));
+                .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
         BDDMockito.verifyZeroInteractions(ruleEngineExecutionCommandMock);
         BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
@@ -240,7 +240,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         processTransactionCommand.execute();
 
         BDDMockito.verify(awardPeriodConnectorServiceMock, Mockito.atLeastOnce())
-                .getAwardPeriod(Mockito.eq(localDate));
+                .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
         BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
         BDDMockito.verifyZeroInteractions(winningTransactionConnectorServiceMock);
 
