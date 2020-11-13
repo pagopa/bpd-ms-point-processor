@@ -41,8 +41,6 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
                     LocalDate endDate = awardPeriod.getEndDate();
                     Integer gracePeriod = awardPeriod.getGracePeriod();
                     LocalDate endGracePeriodDate = endDate.plusDays(gracePeriod != null ? gracePeriod : 30);
-                    log.info("awPeriodId: " + awardPeriod.getAwardPeriodId() + ",startDate: " + startDate + ", endDate: " + endDate + ",endGracePeriod: " + endGracePeriodDate + ", accountingDate: "
-                            + accountingDate + ", trxDate: " + trxDate);
                     return (accountingDate.equals(startDate) || accountingDate.isAfter(startDate)) &&
                             (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate)) &&
                             (trxDate.toLocalDate().equals(startDate) || trxDate.toLocalDate().isBefore(endDate)
