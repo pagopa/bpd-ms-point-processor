@@ -77,4 +77,8 @@ public class Transaction {
     @NotBlank
     String merchantId;
 
+    @NotNull
+    @NotBlank
+    String fiscalCode;
+
 }
