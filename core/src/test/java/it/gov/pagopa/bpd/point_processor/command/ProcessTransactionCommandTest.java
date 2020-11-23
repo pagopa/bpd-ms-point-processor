@@ -58,6 +58,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 ruleEngineExecutionCommandMock,
                 beanFactoryMock,
                 transactionMapperSpy);
+
         BDDMockito.doReturn(ruleEngineExecutionCommandMock).when(beanFactoryMock)
                 .getBean(Mockito.eq(RuleEngineExecutionCommand.class), Mockito.any());
         BDDMockito.doReturn(getAwardPeriod()).when(awardPeriodConnectorServiceMock)
@@ -263,6 +264,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .acquirerId("0")
                 .bin("000001")
                 .terminalId("0")
+                .fiscalCode("fiscalCode")
                 .build();
     }
 
@@ -285,6 +287,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .score(BigDecimal.ONE)
                 .bin("000001")
                 .terminalId("0")
+                .fiscalCode("fiscalCode")
                 .build();
     }
 
