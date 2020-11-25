@@ -63,32 +63,32 @@ variables:
 
 stages:
   - stage: Test
-      displayName: Test
-      condition: or(eq(variables.isPullRequest, true), and(ne(variables.isSIT, true), ne(variables.isUAT, true), ne(variables.isPROD, true)))
-      jobs:
-        - job: Test
-          displayName: Test
-          pool:
-            vmImage: $(vmImageNameDefault)
-          steps:
-            - task: DownloadSecureFile@1
-              displayName: 'download settings.xml for Maven'
-              name: settingsxml
-              inputs:
-                secureFile: 'settings.xml'
-                retryCount: '2'
-            - task: Maven@3
-              inputs:
-                mavenPomFile: 'pom.xml'
-                goals: 'test'
-                options: '-B -s $(settingsxml.secureFilePath)'
-                javaHomeOption: 'JDKVersion'
-                jdkVersionOption: '1.8'
-                mavenVersionOption: 'Default'
-                mavenOptions: '-Xmx3072m'
-                mavenAuthenticateFeed: false
-                effectivePomSkip: true
-                sonarQubeRunAnalysis: false
+    displayName: Test
+    condition: or(eq(variables.isPullRequest, true), and(ne(variables.isSIT, true), ne(variables.isUAT, true), ne(variables.isPROD, true)))
+    jobs:
+      - job: Test
+        displayName: Test
+        pool:
+          vmImage: $(vmImageNameDefault)
+        steps:
+          - task: DownloadSecureFile@1
+            displayName: 'download settings.xml for Maven'
+            name: settingsxml
+            inputs:
+              secureFile: 'settings.xml'
+              retryCount: '2'
+          - task: Maven@3
+            inputs:
+              mavenPomFile: 'pom.xml'
+              goals: 'test'
+              options: '-B -s $(settingsxml.secureFilePath)'
+              javaHomeOption: 'JDKVersion'
+              jdkVersionOption: '1.8'
+              mavenVersionOption: 'Default'
+              mavenOptions: '-Xmx3072m'
+              mavenAuthenticateFeed: false
+              effectivePomSkip: true
+              sonarQubeRunAnalysis: false
 
   - stage: POM
     displayName: POM
