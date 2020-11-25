@@ -37,7 +37,7 @@ class BaseRuleEngineExecutionCommandImpl extends BaseCommand<BigDecimal> impleme
     @Override
     public BigDecimal doExecute() {
         BigDecimal awardScore = scoreMultiplierService.getScoreMultiplier().multiply(transaction.getAmount())
-                .min(BigDecimal.valueOf(15));
+                .min(BigDecimal.valueOf(awardPeriod.getMaxTransactionCashback()));
         return "01".equals(transaction.getOperationType()) ? awardScore.negate() : awardScore;
     }
 
