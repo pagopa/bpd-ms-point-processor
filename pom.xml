@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>bpd-ms-point-processor</artifactId>
-    <version>1.0.0-rc2</version>
+    <version>1.0.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -21,22 +21,22 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
                 <artifactId>bpd-ms-point-processor-integration-event</artifactId>
-                <version>1.0.0-rc2</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
                 <artifactId>bpd-ms-point-processor-integration-rest</artifactId>
-                <version>1.0.0-rc2</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor</groupId>
                 <artifactId>bpd-ms-point-processor-core</artifactId>
-                <version>1.0.0-rc2</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.api</groupId>
                 <artifactId>bpd-ms-point-processor-api-event</artifactId>
-                <version>1.0.0-rc2</version>
+                <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.api</groupId>
