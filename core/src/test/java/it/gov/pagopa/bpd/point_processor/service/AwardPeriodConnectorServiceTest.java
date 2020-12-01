@@ -47,7 +47,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
                     .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
-                    .getAwardPeriod(getRequestParam());
+                    .getAwardPeriod(getRequestParam(), getTrx());
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
@@ -70,7 +70,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
                     .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
-                    .getAwardPeriod(getRequestParam());
+                    .getAwardPeriod(getRequestParam(), getTrx());
 
             Assert.assertNull(awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
@@ -92,7 +92,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
                 .getActiveAwardPeriods();
 
         expectedException.expect(Exception.class);
-        awardPeriodConnectorService.getAwardPeriod(null);
+        awardPeriodConnectorService.getAwardPeriod(null, null);
 
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
                 .getActiveAwardPeriods();
@@ -114,7 +114,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
                     .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
-                    .getAwardPeriod(getRequestParam());
+                    .getAwardPeriod(getRequestParam(), getTrx());
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
@@ -133,6 +133,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         try {
 
             LocalDate date = LocalDate.parse("2020-05-05");
+            OffsetDateTime trxDate = OffsetDateTime.parse("2020-05-04T16:22:45.304Z");
 
             AwardPeriod firstPeriod = getAwardPeriod();
             AwardPeriod secondPeriod = getAwardPeriod();
@@ -144,7 +145,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
                     .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
-                    .getAwardPeriod(date);
+                    .getAwardPeriod(date, trxDate);
 
             Assert.assertEquals(getAwardPeriod(), awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
@@ -163,6 +164,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         try {
 
             LocalDate date = LocalDate.parse("2020-05-09");
+            OffsetDateTime trxDate = OffsetDateTime.parse("2020-05-11T16:22:45.304Z");
 
             AwardPeriod firstPeriod = getAwardPeriod();
             AwardPeriod secondPeriod = getAwardPeriod();
@@ -175,7 +177,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
                     .getActiveAwardPeriods();
 
             AwardPeriod awardPeriod = awardPeriodConnectorService
-                    .getAwardPeriod(date);
+                    .getAwardPeriod(date, trxDate);
 
             Assert.assertEquals(secondPeriod, awardPeriod);
             BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
@@ -199,6 +201,10 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
     protected LocalDate getRequestParam() {
         return LocalDate.parse("2020-04-09");
+    }
+
+    protected OffsetDateTime getTrx() {
+        return OffsetDateTime.parse("2020-04-08T16:22:45.304Z");
     }
 
 }

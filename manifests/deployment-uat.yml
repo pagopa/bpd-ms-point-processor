@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: bpdmspointprocessor
 spec:
-  replicas: 1
+  replicas: 4
   selector:
     matchLabels:
       app: bpdmspointprocessor

@@ -84,4 +84,8 @@ public class WinningTransaction {
     @NotBlank
     String terminalId;
 
+    @NotNull
+    @NotBlank
+    String fiscalCode;
+
 }

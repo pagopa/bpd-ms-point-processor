@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -25,14 +26,14 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
     }
 
     /**
-     * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(LocalDate)}, that contacts
+     * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(LocalDate, OffsetDateTime)}, that contacts
      * THe endpoint managed with {@link AwardPeriodRestClient} to recover {@link List<AwardPeriod>}, and recovers
      * the first active period available
      *
      * @param accountingDate {@link LocalDate} used for searching a {@link AwardPeriod}
      * @return instance of {@link AwardPeriod} associated to the input param
      */
-    public AwardPeriod getAwardPeriod(LocalDate accountingDate) {
+    public AwardPeriod getAwardPeriod(LocalDate accountingDate, OffsetDateTime trxDate) {
         List<AwardPeriod> awardPeriods = awardPeriodRestClient.getActiveAwardPeriods();
         return awardPeriods.stream().sorted(Comparator.comparing(AwardPeriod::getStartDate))
                 .filter(awardPeriod -> {
@@ -41,7 +42,9 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
                     Integer gracePeriod = awardPeriod.getGracePeriod();
                     LocalDate endGracePeriodDate = endDate.plusDays(gracePeriod != null ? gracePeriod : 30);
                     return (accountingDate.equals(startDate) || accountingDate.isAfter(startDate)) &&
-                           (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate));
+                            (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate)) &&
+                            (trxDate.toLocalDate().equals(startDate) || trxDate.toLocalDate().isBefore(endDate)
+                                    || trxDate.toLocalDate().equals(endDate));
 
                 })
                 .findFirst().orElse(null);

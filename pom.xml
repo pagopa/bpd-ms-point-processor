@@ -4,67 +4,71 @@
 
     <parent>
         <groupId>it.gov.pagopa.bpd.ms</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>1.0.3</version>
         <artifactId>bpd-ms-starter-parent</artifactId>
     </parent>
 
     <artifactId>bpd-ms-point-processor</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0-rc2</version>
     <packaging>pom</packaging>
+
+    <properties>
+        <bpd-commons.version>1.0.4</bpd-commons.version>
+    </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
                 <artifactId>bpd-ms-point-processor-integration-event</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.0-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
                 <artifactId>bpd-ms-point-processor-integration-rest</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.0-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor</groupId>
                 <artifactId>bpd-ms-point-processor-core</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.0-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.api</groupId>
                 <artifactId>bpd-ms-point-processor-api-event</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>1.0.0-rc2</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.api</groupId>
                 <artifactId>bpd-commons-api-rest</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${bpd-commons.version}</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons</groupId>
                 <artifactId>bpd-commons-core</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${bpd-commons.version}</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
                 <artifactId>bpd-commons-integration-jpa</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${bpd-commons.version}</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
                 <artifactId>bpd-commons-integration-jpa</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${bpd-commons.version}</version>
                 <type>test-jar</type>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
                 <artifactId>bpd-commons-integration-rest</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${bpd-commons.version}</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.integration</groupId>
                 <artifactId>bpd-commons-integration-rest</artifactId>
-                <version>1.0-SNAPSHOT</version>
+                <version>${bpd-commons.version}</version>
                 <type>test-jar</type>
             </dependency>
         </dependencies>
@@ -84,4 +88,30 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <distributionManagement>
+        <repository>
+            <id>cstar</id>
+            <url>https://pkgs.dev.azure.com/sia-dds/cstar/_packaging/cstar/maven/v1</url>
+        </repository>
+    </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>cstar</id>
+            <url>https://pkgs.dev.azure.com/sia-dds/cstar/_packaging/cstar/maven/v1</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/pagopa/bpd-ms-point-processor.git</developerConnection>
+        <tag>1.0.0-rc2</tag>
+    </scm>
+
 </project>
