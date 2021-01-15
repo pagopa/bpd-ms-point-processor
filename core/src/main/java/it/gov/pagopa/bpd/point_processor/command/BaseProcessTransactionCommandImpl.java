@@ -1,8 +1,6 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
 import eu.sia.meda.core.command.BaseCommand;
-import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
-import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
@@ -19,10 +17,6 @@ import org.springframework.context.annotation.Scope;
 
 import javax.validation.*;
 import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 
@@ -42,16 +36,12 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
     private WinningTransactionConnectorService winningTransactionConnectorService;
-    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
-    private SimpleEventResponseTransformer simpleEventResponseTransformer;
     private AwardPeriodConnectorService awardPeriodConnectorService;
     private BeanFactory beanFactory;
     private TransactionMapper transactionMapper;
-    private LocalDate processDateTime;
 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel) {
         this.processTransactionCommandModel = processTransactionCommandModel;
-        this.processDateTime = LocalDate.now();
     }
 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel,
@@ -60,7 +50,6 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
                                              BeanFactory beanFactory,
                                              TransactionMapper transactionMapper) {
         this.processTransactionCommandModel = processTransactionCommandModel;
-        this.processDateTime = LocalDate.now();
         this.winningTransactionConnectorService = winningTransactionConnectorService;
         this.awardPeriodConnectorService = awardPeriodConnectorService;
         this.beanFactory = beanFactory;
@@ -82,28 +71,9 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
         Transaction transaction = processTransactionCommandModel.getPayload();
 
         try {
-
-            OffsetDateTime exec_start = OffsetDateTime.now();
-
-            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss.SSSXXXXX");
-
             validateRequest(transaction);
 
-            OffsetDateTime awrd_prd_start = OffsetDateTime.now();
-
-            AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(processDateTime, transaction.getTrxDate());
-
-            OffsetDateTime awrd_prd_end = OffsetDateTime.now();
-
-            log.info("Executed getAwardPeriod for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}",
-                    transaction.getIdTrxAcquirer(),
-                    transaction.getAcquirerCode(),
-                    transaction.getTrxDate(),
-                    dateTimeFormatter.format(awrd_prd_start),
-                    dateTimeFormatter.format(awrd_prd_end),
-                    ChronoUnit.MILLIS.between(awrd_prd_start, awrd_prd_end));
-
+            AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(transaction.getTrxDate());
 
             if (awardPeriod == null) {
                 throw new Exception("No AwardPeriod found");
@@ -118,32 +88,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
             winningTransaction.setScore(awardScore);
 
-            OffsetDateTime save_start = OffsetDateTime.now();
-
             winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
-
-            OffsetDateTime save_end = OffsetDateTime.now();
-
-            log.info("Executed publishing WinningTransaction for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}",
-                    transaction.getIdTrxAcquirer(),
-                    transaction.getAcquirerCode(),
-                    transaction.getTrxDate(),
-                    dateTimeFormatter.format(save_start),
-                    dateTimeFormatter.format(save_end),
-                    ChronoUnit.MILLIS.between(save_start, save_end));
-
-
-            OffsetDateTime end_exec = OffsetDateTime.now();
-
-            log.info("Executed ProcessTransactionCommand for transaction: {}, {}, {} " +
-                            "- Started at {}, Ended at {} - Total exec time: {}",
-                    transaction.getIdTrxAcquirer(),
-                    transaction.getAcquirerCode(),
-                    transaction.getTrxDate(),
-                    dateTimeFormatter.format(exec_start),
-                    dateTimeFormatter.format(end_exec),
-                    ChronoUnit.MILLIS.between(exec_start, end_exec));
 
             return true;
 

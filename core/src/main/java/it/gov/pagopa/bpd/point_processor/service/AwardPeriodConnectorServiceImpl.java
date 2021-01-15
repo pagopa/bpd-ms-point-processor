@@ -26,29 +26,29 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
     }
 
     /**
-     * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(LocalDate, OffsetDateTime)}, that contacts
+     * Implementation of {@link AwardPeriodConnectorService#getAwardPeriod(OffsetDateTime)}, that contacts
      * THe endpoint managed with {@link AwardPeriodRestClient} to recover {@link List<AwardPeriod>}, and recovers
      * the first active period available
      *
-     * @param accountingDate {@link LocalDate} used for searching a {@link AwardPeriod}
+     * @param accountingDateTime {@link LocalDate} used for searching a {@link AwardPeriod}
      * @return instance of {@link AwardPeriod} associated to the input param
      */
-    public AwardPeriod getAwardPeriod(LocalDate accountingDate, OffsetDateTime trxDate) {
+    public AwardPeriod getAwardPeriod(OffsetDateTime accountingDateTime) {
         List<AwardPeriod> awardPeriods = awardPeriodRestClient.getActiveAwardPeriods();
-        return awardPeriods.stream().sorted(Comparator.comparing(AwardPeriod::getStartDate))
-                .filter(awardPeriod -> {
-                    LocalDate startDate = awardPeriod.getStartDate();
-                    LocalDate endDate = awardPeriod.getEndDate();
-                    Integer gracePeriod = awardPeriod.getGracePeriod();
-                    LocalDate endGracePeriodDate = endDate.plusDays(gracePeriod != null ? gracePeriod : 30);
-                    return (accountingDate.equals(startDate) || accountingDate.isAfter(startDate)) &&
-                            (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate)) &&
-                            (trxDate.toLocalDate().equals(startDate) ||
-                                    (trxDate.toLocalDate().isAfter(startDate) && trxDate.toLocalDate().isBefore(endDate))
-                                    || trxDate.toLocalDate().equals(endDate));
+        return awardPeriods.stream()
+                .filter(awardPeriod -> checkAccountingDate(accountingDateTime, awardPeriod))
+                .min(Comparator.comparing(AwardPeriod::getStartDate)).orElse(null);
+    }
 
-                })
-                .findFirst().orElse(null);
+
+    private static boolean checkAccountingDate(OffsetDateTime accountingDateTime, AwardPeriod awardPeriod) {
+        LocalDate accountingDate = accountingDateTime.toLocalDate();
+        LocalDate endGracePeriodDate = awardPeriod.getEndDate().plusDays(awardPeriod.getGracePeriod() != null
+                ? awardPeriod.getGracePeriod()
+                : 30);
+
+        return (accountingDate.equals(awardPeriod.getStartDate()) || accountingDate.isAfter(awardPeriod.getStartDate()))
+                && (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate));
     }
 
 }
