@@ -4,6 +4,7 @@ import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
+import it.gov.pagopa.bpd.point_processor.exception.AwardPeriodNotFoundException;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
@@ -50,7 +51,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
     OffsetDateTime offsetDateTime = OffsetDateTime.parse("2020-04-09T16:22:45.304Z");
 
     @Before
-    public void initTest() {
+    public void initTest() throws AwardPeriodNotFoundException {
         Mockito.reset(
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
