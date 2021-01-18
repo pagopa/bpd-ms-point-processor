@@ -75,10 +75,6 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             AwardPeriod awardPeriod = awardPeriodConnectorService.getAwardPeriod(transaction.getTrxDate());
 
-            if (awardPeriod == null) {
-                throw new Exception("No AwardPeriod found");
-            }
-
             RuleEngineExecutionCommand ruleEngineExecutionCommand =
                     beanFactory.getBean(RuleEngineExecutionCommand.class, transaction, awardPeriod);
 
