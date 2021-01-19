@@ -21,9 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
 
-    private static final String ACTIVE_STATUS = "ACTIVE";
-
-    private AwardPeriodRestClient awardPeriodRestClient;
+    private final AwardPeriodRestClient awardPeriodRestClient;
 
     @Autowired
     public AwardPeriodConnectorServiceImpl(AwardPeriodRestClient awardPeriodRestClient) {
@@ -53,8 +51,9 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
         }
 
         if (isWithinProgrammeScope(accountingDateTime.toLocalDate(), awardPeriods)) {
+            final LocalDate today = LocalDate.now();
             TreeSet<AwardPeriod> activeAwardPeriods = awardPeriods.stream()
-                    .filter(awardPeriod -> ACTIVE_STATUS.equals(awardPeriod.getStatus()))
+                    .filter(awardPeriod -> isWithinPeriod(today, awardPeriod))
                     .collect(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(AwardPeriod::getStartDate))));
 
             if (activeAwardPeriods.isEmpty()) {
@@ -64,6 +63,7 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
                 result = activeAwardPeriods.first();
 
                 for (AwardPeriod awardPeriod : activeAwardPeriods) {
+
                     if (isWithinPeriodStrict(accountingDateTime.toLocalDate(), awardPeriod)) {
                         result = awardPeriod;
                     }
@@ -87,18 +87,27 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
             LocalDate endGracePeriodDate = awardPeriods.get(awardPeriods.size() - 1).getEndDate()
                     .plusDays(awardPeriods.get(awardPeriods.size() - 1).getGracePeriod());
 
-            result = accountingDate.equals(programmeStartDate) || accountingDate.isAfter(programmeStartDate)
-                    && accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate);
+            result = (accountingDate.equals(programmeStartDate) || accountingDate.isAfter(programmeStartDate))
+                    && (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate));
         }
 
         return result;
     }
 
 
-    private boolean isWithinPeriodStrict(LocalDate accountingDate, AwardPeriod awardPeriod) {
+    private boolean isWithinPeriod(LocalDate localDate, AwardPeriod awardPeriod) {
+        LocalDate endGracePeriodDate = awardPeriod.getEndDate()
+                .plusDays(awardPeriod.getGracePeriod());
 
-        return (accountingDate.equals(awardPeriod.getStartDate()) || accountingDate.isAfter(awardPeriod.getStartDate()))
-                && (accountingDate.equals(awardPeriod.getEndDate()) || accountingDate.isBefore(awardPeriod.getEndDate()));
+        return (localDate.equals(awardPeriod.getStartDate()) || localDate.isAfter(awardPeriod.getStartDate()))
+                && (localDate.equals(endGracePeriodDate) || localDate.isBefore(endGracePeriodDate));
+    }
+
+
+    private boolean isWithinPeriodStrict(LocalDate localDate, AwardPeriod awardPeriod) {
+
+        return (localDate.equals(awardPeriod.getStartDate()) || localDate.isAfter(awardPeriod.getStartDate()))
+                && (localDate.equals(awardPeriod.getEndDate()) || localDate.isBefore(awardPeriod.getEndDate()));
     }
 
 }
