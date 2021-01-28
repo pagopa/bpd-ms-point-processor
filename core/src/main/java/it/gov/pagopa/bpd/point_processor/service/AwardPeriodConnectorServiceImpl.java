@@ -44,7 +44,7 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
             throw new AwardPeriodNotFoundException("Future accounting date");
         }
 
-        List<AwardPeriod> awardPeriods = awardPeriodRestClient.findAll();
+        List<AwardPeriod> awardPeriods = awardPeriodRestClient.findAll(AwardPeriodRestClient.Ordering.START_DATE);
 
         if (awardPeriods == null || awardPeriods.isEmpty()) {
             throw new AwardPeriodNotFoundException("No periods available");
@@ -60,17 +60,22 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
                 throw new AwardPeriodNotFoundException("No active periods available");
 
             } else {
-                result = activeAwardPeriods.first();
-
-                for (AwardPeriod awardPeriod : activeAwardPeriods) {
-
-                    if (isWithinPeriodStrict(accountingDateTime.toLocalDate(), awardPeriod)) {
-                        result = awardPeriod;
-                    }
-                }
+                result = activeAwardPeriods.stream()
+                        .filter(ap -> isWithinPeriodStrict(accountingDateTime.toLocalDate(), ap))
+                        .findAny().orElse(activeAwardPeriods.first());
+//                result = activeAwardPeriods.first();
+//
+//                for (AwardPeriod awardPeriod : activeAwardPeriods) {
+//
+//                    if (isWithinPeriodStrict(accountingDateTime.toLocalDate(), awardPeriod)) {
+//                        result = awardPeriod;
+//                    }
+//                }
             }
 
         } else {
+            System.err.println("awardPeriods = " + awardPeriods);
+            System.err.println("accountingDateTime = " + accountingDateTime);
             throw new AwardPeriodNotFoundException("Accounting date out of programme scope");
         }
 
@@ -82,7 +87,6 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
         boolean result = false;
 
         if (!awardPeriods.isEmpty()) {
-            awardPeriods.sort(Comparator.comparing(AwardPeriod::getStartDate));
             LocalDate programmeStartDate = awardPeriods.get(0).getStartDate();
             LocalDate endGracePeriodDate = awardPeriods.get(awardPeriods.size() - 1).getEndDate()
                     .plusDays(awardPeriods.get(awardPeriods.size() - 1).getGracePeriod());
