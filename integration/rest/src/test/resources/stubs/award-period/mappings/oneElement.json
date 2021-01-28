@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/bpd/award-periods/actives"
+    "urlPath": "/bpd/award-periods/"
   },
   "response": {
     "status": "200",

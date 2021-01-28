@@ -15,6 +15,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 /**
  * Class for unit-testing {@link AwardPeriodConnectorService}
@@ -34,6 +36,11 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         Mockito.reset(awardPeriodRestClientMock);
         awardPeriodConnectorService =
                 new AwardPeriodConnectorServiceImpl(awardPeriodRestClientMock);
+
+        BDDMockito.when(awardPeriodRestClientMock.findAll(AwardPeriodRestClient.Ordering.START_DATE))
+                .thenAnswer(invocationOnMock -> awardPeriodRestClientMock.findAll().stream()
+                        .sorted(Comparator.comparing(AwardPeriod::getStartDate))
+                        .collect(Collectors.toList()));
     }
 
 
@@ -49,7 +56,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
         Assert.assertEquals(getAwardPeriod(0), awardPeriod);
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .findAll();
+                .findAll(Mockito.any(AwardPeriodRestClient.Ordering.class));
     }
 
     protected AwardPeriod getAwardPeriod(long bias) {
@@ -81,7 +88,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
         Assert.assertNull(awardPeriod);
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .findAll();
+                .findAll(Mockito.any(AwardPeriodRestClient.Ordering.class));
     }
 
     @Test(expected = AwardPeriodNotFoundException.class)
@@ -95,7 +102,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
         awardPeriodConnectorService.getAwardPeriod(TODAY);
 
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .findAll();
+                .findAll(Mockito.any(AwardPeriodRestClient.Ordering.class));
     }
 
     @Test
@@ -112,7 +119,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
         Assert.assertEquals(getAwardPeriod(0), awardPeriod);
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .findAll();
+                .findAll(Mockito.any(AwardPeriodRestClient.Ordering.class));
     }
 
     @Test
@@ -129,7 +136,7 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
         Assert.assertEquals(getAwardPeriod(1), awardPeriod);
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .findAll();
+                .findAll(Mockito.any(AwardPeriodRestClient.Ordering.class));
     }
 
     @Test
@@ -146,7 +153,22 @@ public class AwardPeriodConnectorServiceTest extends BaseTest {
 
         Assert.assertEquals(secondPeriod, awardPeriod);
         BDDMockito.verify(awardPeriodRestClientMock, Mockito.atLeastOnce())
-                .findAll();
+                .findAll(AwardPeriodRestClient.Ordering.START_DATE);
     }
+
+//    @Test
+//    public void myTest() {
+//        AwardPeriod ap1 = new AwardPeriod();
+//        ap1.setStartDate(LocalDate.of(2020, 12, 01));
+//
+//        AwardPeriod ap2 = getAwardPeriod(1);
+//        AwardPeriod ap3 = getAwardPeriod(2);
+//
+//        BDDMockito.doReturn(Arrays.asList(ap1, ap2), ap3)
+//                .when(awardPeriodRestClientMock)
+//                .findAll();
+//
+//        awardPeriodConnectorService.getAwardPeriod()
+//    }
 
 }
