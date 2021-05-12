@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.point_processor.connector.award_period.model;
 
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 /**
@@ -20,5 +21,6 @@ public class AwardPeriod {
     private LocalDate endDate;
     private Integer gracePeriod;
     private Integer maxTransactionCashback;
+    private BigDecimal minAmount;
 
 }

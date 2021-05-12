@@ -14,15 +14,14 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.OffsetDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Set;
 
 
@@ -47,7 +46,9 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     private AwardPeriodConnectorService awardPeriodConnectorService;
     private BeanFactory beanFactory;
     private TransactionMapper transactionMapper;
-    private LocalDate processDateTime;
+    private final LocalDate processDateTime;
+    private LocalDate enableDate;
+
 
     public BaseProcessTransactionCommandImpl(ProcessTransactionCommandModel processTransactionCommandModel) {
         this.processTransactionCommandModel = processTransactionCommandModel;
@@ -98,6 +99,9 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             WinningTransaction winningTransaction = transactionMapper.map(transaction);
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
+            if (processDateTime.isAfter(enableDate) || processDateTime.equals(enableDate)) {
+                winningTransaction.setValid(winningTransaction.getAmount().longValue() > awardPeriod.getMinAmount().longValue());
+            }
             winningTransaction.setScore(awardScore);
 
             winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
@@ -143,6 +147,13 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
     @Autowired
     public void setTransactionMapper(TransactionMapper transactionMapper) {
         this.transactionMapper = transactionMapper;
+    }
+
+
+    @Autowired
+    private void setLocalDate(@Value(value = "${it.gov.pagopa.bpd.point_processor.service.LocalDate}")
+                              @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enableDate) {
+        this.enableDate = enableDate;
     }
 
     /**

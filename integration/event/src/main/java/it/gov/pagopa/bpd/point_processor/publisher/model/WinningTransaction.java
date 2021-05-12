@@ -4,6 +4,7 @@ import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -87,5 +88,9 @@ public class WinningTransaction {
     @NotNull
     @NotBlank
     String fiscalCode;
+
+    @NotBlank
+    @Nullable
+    Boolean valid;
 
 }
