@@ -8,6 +8,7 @@ import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
@@ -99,7 +100,8 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             WinningTransaction winningTransaction = transactionMapper.map(transaction);
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-            if (processDateTime.isAfter(enableDate) || processDateTime.equals(enableDate)) {
+            if (processDateTime.isAfter(enableDate) || processDateTime.equals(enableDate)
+                    && winningTransaction.getOperationType() != OperationType.STORNO_PAGAMENTO) {
                 winningTransaction.setValid(winningTransaction.getAmount().longValue() > awardPeriod.getMinAmount().longValue());
             }
             winningTransaction.setScore(awardScore);
