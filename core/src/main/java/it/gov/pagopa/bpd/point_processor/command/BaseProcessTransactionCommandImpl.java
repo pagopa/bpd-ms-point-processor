@@ -153,7 +153,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
 
     @Autowired
-    private void setLocalDate(@Value(value = "${it.gov.pagopa.bpd.point_processor.service.enabledDate}")
+    public void setLocalDate(@Value(value = "${it.gov.pagopa.bpd.point_processor.service.enabledDate}")
                               @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate enableDate) {
         this.enableDate = enableDate;
     }
