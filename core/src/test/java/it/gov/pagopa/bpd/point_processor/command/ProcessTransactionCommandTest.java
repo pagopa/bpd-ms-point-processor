@@ -28,9 +28,6 @@ import java.time.OffsetDateTime;
 /**
  * Class for unit-testing {@link ProcessTransactionCommand}
  */
-//@RunWith(SpringRunner.class)
-//@ContextConfiguration(classes = BaseProcessTransactionCommandImpl.class)
-//@TestPropertySource(locations = "classpath:config/scoreMultiplier.properties")
 public class ProcessTransactionCommandTest extends BaseTest {
 
 
@@ -54,8 +51,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     LocalDate localDate = LocalDate.now();
 
-//    @Value("${it.gov.pagopa.bpd.point_processor.service.LocalDate}")
-//    private LocalDate enableDate;
 
     @Before
     public void initTest() {
@@ -73,14 +68,14 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
-    //    @Test
+    @Test
     public void testExecute_Ok_WinningTransaction() {
 
         Transaction transaction = getCommandModel();
         BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
                 .saveWinningTransaction(Mockito.eq(getSaveModel()));
 
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
+        ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
@@ -89,6 +84,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         );
 
         try {
+            processTransactionCommand.setLocalDate(localDate);
 
             BDDMockito.doReturn(BigDecimal.ONE).when(ruleEngineExecutionCommandMock).execute();
 
@@ -162,7 +158,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
-    //    @Test
+    @Test
     public void testExecute_Ok_WinningTransaction_NegativeScore() {
 
         Transaction transaction = getCommandModel();
@@ -171,7 +167,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
                 .saveWinningTransaction(Mockito.eq(getSaveModel()));
 
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
+        ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
@@ -180,6 +176,8 @@ public class ProcessTransactionCommandTest extends BaseTest {
         );
 
         try {
+
+            processTransactionCommand.setLocalDate(localDate);
 
             BDDMockito.doReturn(BigDecimal.valueOf(-1)).when(ruleEngineExecutionCommandMock).execute();
 
