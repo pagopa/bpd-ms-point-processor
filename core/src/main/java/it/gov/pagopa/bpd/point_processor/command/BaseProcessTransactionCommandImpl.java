@@ -100,7 +100,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
             WinningTransaction winningTransaction = transactionMapper.map(transaction);
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
-            if (processDateTime.isAfter(enableDate) || processDateTime.equals(enableDate)
+            if ((processDateTime.isAfter(enableDate) || processDateTime.equals(enableDate))
                     && winningTransaction.getOperationType() != OperationType.STORNO_PAGAMENTO) {
                 winningTransaction.setValid(winningTransaction.getAmount().longValue() > awardPeriod.getMinAmount().longValue());
             }
