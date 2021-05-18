@@ -10,6 +10,8 @@ import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -84,7 +86,10 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             winningTransaction.setAwardPeriodId(awardPeriod.getAwardPeriodId());
             winningTransaction.setScore(awardScore);
 
-            winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
+            Header statusUpdateHeader = processTransactionCommandModel.getHeaders()
+                    .lastHeader("CITIZEN_STATUS_UPDATE");
+
+            winningTransactionConnectorService.saveWinningTransaction(winningTransaction, statusUpdateHeader);
 
             return true;
 
