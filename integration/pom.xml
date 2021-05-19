@@ -4,12 +4,12 @@
     <parent>
         <artifactId>bpd-ms-point-processor</artifactId>
         <groupId>it.gov.pagopa.bpd.ms</groupId>
-        <version>CEN-157-rc2</version>
+        <version>CEN-156-157-rc1</version>
     </parent>
 
     <groupId>it.gov.pagopa.bpd.ms.point_processor</groupId>
     <artifactId>bpd-ms-point-processor-integration</artifactId>
-    <version>CEN-157-rc2</version>
+    <version>CEN-156-157-rc1</version>
     <packaging>pom</packaging>
 
     <modules>
