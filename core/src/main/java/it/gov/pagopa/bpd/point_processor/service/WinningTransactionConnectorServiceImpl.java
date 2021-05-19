@@ -5,6 +5,8 @@ import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +34,12 @@ class WinningTransactionConnectorServiceImpl implements WinningTransactionConnec
     }
 
     @Override
-    public void saveWinningTransaction(WinningTransaction winningTransaction) {
+    public void saveWinningTransaction(WinningTransaction winningTransaction, Header statusUpdateHeader) {
+        RecordHeaders recordHeaders = new RecordHeaders();
+        if (statusUpdateHeader != null && statusUpdateHeader.value() != null) {
+            recordHeaders.add("CITIZEN_VALIDATION_DATETIME", statusUpdateHeader.value());
+        }
         saveTransactionPublisherConnector.doCall(winningTransaction,
-                simpleEventRequestTransformer, simpleEventResponseTransformer);
+                simpleEventRequestTransformer, simpleEventResponseTransformer, recordHeaders);
     }
 }

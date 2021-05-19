@@ -1,8 +1,6 @@
 package it.gov.pagopa.bpd.point_processor.command;
 
 import eu.sia.meda.core.command.BaseCommand;
-import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
-import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
@@ -13,6 +11,9 @@ import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.header.Header;
+import org.apache.kafka.common.header.internals.RecordHeader;
+import org.apache.kafka.common.header.Header;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,8 +43,6 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
 
     private final ProcessTransactionCommandModel processTransactionCommandModel;
     private WinningTransactionConnectorService winningTransactionConnectorService;
-    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
-    private SimpleEventResponseTransformer simpleEventResponseTransformer;
     private AwardPeriodConnectorService awardPeriodConnectorService;
     private BeanFactory beanFactory;
     private TransactionMapper transactionMapper;
@@ -106,7 +105,10 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             }
             winningTransaction.setScore(awardScore);
 
-            winningTransactionConnectorService.saveWinningTransaction(winningTransaction);
+            Header statusUpdateHeader = processTransactionCommandModel.getHeaders()
+                    .lastHeader("CITIZEN_VALIDATION_DATETIME");
+
+            winningTransactionConnectorService.saveWinningTransaction(winningTransaction, statusUpdateHeader);
 
             return true;
 

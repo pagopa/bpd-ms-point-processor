@@ -4,12 +4,14 @@ import eu.sia.meda.BaseTest;
 import it.gov.pagopa.bpd.point_processor.command.model.ProcessTransactionCommandModel;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
+import it.gov.pagopa.bpd.point_processor.exception.AwardPeriodNotFoundException;
 import it.gov.pagopa.bpd.point_processor.mapper.TransactionMapper;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.BeanFactory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.util.Collections;
 
 /**
  * Class for unit-testing {@link ProcessTransactionCommand}
@@ -73,7 +76,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
         Transaction transaction = getCommandModel();
         BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
-                .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
@@ -95,7 +98,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                     .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                    .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -158,6 +161,50 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
+    protected Transaction getCommandModel() {
+        return Transaction.builder()
+                .idTrxAcquirer("1")
+                .acquirerCode("001")
+                .trxDate(offsetDateTime)
+                .amount(BigDecimal.valueOf(1313.13))
+                .operationType("00")
+                .hpan("hpan")
+                .merchantId("0")
+                .circuitType("00")
+                .mcc("813")
+                .idTrxIssuer("0")
+                .amountCurrency("833")
+                .correlationId("1")
+                .acquirerId("0")
+                .bin("000001")
+                .terminalId("0")
+                .fiscalCode("fiscalCode")
+                .build();
+    }
+
+    protected WinningTransaction getSaveModel() {
+        return WinningTransaction.builder()
+                .idTrxAcquirer("1")
+                .acquirerCode("001")
+                .trxDate(offsetDateTime)
+                .amount(BigDecimal.valueOf(1313.13))
+                .operationType(OperationType.PAGAMENTO)
+                .hpan("hpan")
+                .merchantId("0")
+                .circuitType("00")
+                .mcc("813")
+                .idTrxIssuer("0")
+                .amountCurrency("833")
+                .correlationId("1")
+                .acquirerId("0")
+                .awardPeriodId(1L)
+                .score(BigDecimal.ONE)
+                .bin("000001")
+                .terminalId("0")
+                .fiscalCode("fiscalCode")
+                .build();
+    }
+
     @Test
     public void testExecute_Ok_WinningTransaction_NegativeScore() {
 
@@ -165,7 +212,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
         WinningTransaction winningTransaction = getSaveModel();
         winningTransaction.setScore(BigDecimal.valueOf(-1));
         BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
-                .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
                 ProcessTransactionCommandModel.builder().payload(transaction).build(),
@@ -188,7 +235,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                     .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                    .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
