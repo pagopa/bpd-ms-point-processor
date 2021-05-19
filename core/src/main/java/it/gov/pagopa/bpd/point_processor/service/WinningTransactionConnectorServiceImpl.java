@@ -36,8 +36,8 @@ class WinningTransactionConnectorServiceImpl implements WinningTransactionConnec
     @Override
     public void saveWinningTransaction(WinningTransaction winningTransaction, Header statusUpdateHeader) {
         RecordHeaders recordHeaders = new RecordHeaders();
-        if (statusUpdateHeader != null) {
-            recordHeaders.add("CITIZEN_STATUS_UPDATE", statusUpdateHeader.value());
+        if (statusUpdateHeader != null && statusUpdateHeader.value() != null) {
+            recordHeaders.add("CITIZEN_VALIDATION_DATETIME", statusUpdateHeader.value());
         }
         saveTransactionPublisherConnector.doCall(winningTransaction,
                 simpleEventRequestTransformer, simpleEventResponseTransformer, recordHeaders);

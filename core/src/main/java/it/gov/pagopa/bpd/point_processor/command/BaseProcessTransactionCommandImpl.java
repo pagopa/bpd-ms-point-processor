@@ -87,7 +87,7 @@ class BaseProcessTransactionCommandImpl extends BaseCommand<Boolean> implements 
             winningTransaction.setScore(awardScore);
 
             Header statusUpdateHeader = processTransactionCommandModel.getHeaders()
-                    .lastHeader("CITIZEN_STATUS_UPDATE");
+                    .lastHeader("CITIZEN_VALIDATION_DATETIME");
 
             winningTransactionConnectorService.saveWinningTransaction(winningTransaction, statusUpdateHeader);
 
