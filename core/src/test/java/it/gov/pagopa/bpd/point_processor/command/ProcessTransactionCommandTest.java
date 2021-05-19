@@ -79,7 +79,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
+                ProcessTransactionCommandModel.builder().payload(transaction).headers(new RecordHeaders()).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
                 beanFactoryMock,
@@ -161,50 +161,6 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
     }
 
-    protected Transaction getCommandModel() {
-        return Transaction.builder()
-                .idTrxAcquirer("1")
-                .acquirerCode("001")
-                .trxDate(offsetDateTime)
-                .amount(BigDecimal.valueOf(1313.13))
-                .operationType("00")
-                .hpan("hpan")
-                .merchantId("0")
-                .circuitType("00")
-                .mcc("813")
-                .idTrxIssuer("0")
-                .amountCurrency("833")
-                .correlationId("1")
-                .acquirerId("0")
-                .bin("000001")
-                .terminalId("0")
-                .fiscalCode("fiscalCode")
-                .build();
-    }
-
-    protected WinningTransaction getSaveModel() {
-        return WinningTransaction.builder()
-                .idTrxAcquirer("1")
-                .acquirerCode("001")
-                .trxDate(offsetDateTime)
-                .amount(BigDecimal.valueOf(1313.13))
-                .operationType(OperationType.PAGAMENTO)
-                .hpan("hpan")
-                .merchantId("0")
-                .circuitType("00")
-                .mcc("813")
-                .idTrxIssuer("0")
-                .amountCurrency("833")
-                .correlationId("1")
-                .acquirerId("0")
-                .awardPeriodId(1L)
-                .score(BigDecimal.ONE)
-                .bin("000001")
-                .terminalId("0")
-                .fiscalCode("fiscalCode")
-                .build();
-    }
-
     @Test
     public void testExecute_Ok_WinningTransaction_NegativeScore() {
 
@@ -215,7 +171,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                 .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
+                ProcessTransactionCommandModel.builder().payload(transaction).headers(new RecordHeaders()).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
                 beanFactoryMock,

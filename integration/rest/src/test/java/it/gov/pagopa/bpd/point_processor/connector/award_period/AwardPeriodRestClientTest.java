@@ -2,7 +2,6 @@ package it.gov.pagopa.bpd.point_processor.connector.award_period;
 
 import com.github.tomakehurst.wiremock.junit.WireMockClassRule;
 import it.gov.pagopa.bpd.common.connector.BaseFeignRestClientTest;
-import it.gov.pagopa.bpd.point_processor.connector.award_period.AwardPeriodRestClient.Ordering;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.config.AwardPeriodRestConnectorConfig;
 import it.gov.pagopa.bpd.point_processor.connector.award_period.model.AwardPeriod;
 import lombok.SneakyThrows;
@@ -99,7 +98,7 @@ public class AwardPeriodRestClientTest extends BaseFeignRestClientTest {
 
     @Test
     public void getAwardPeriods_Ok_NotEmpty() {
-        final List<AwardPeriod> actualResponse = restClient.findAll(Ordering.START_DATE);
+        final List<AwardPeriod> actualResponse = restClient.getActiveAwardPeriods();
 
         Assert.assertNotNull(actualResponse);
         Assert.assertFalse(actualResponse.isEmpty());
@@ -107,58 +106,58 @@ public class AwardPeriodRestClientTest extends BaseFeignRestClientTest {
 
     @Test
     public void getAwardPeriods_cacheMiss_notPresent() {
-        Assert.assertFalse(getCachedAwardPeriods(Ordering.START_DATE).isPresent());
+        Assert.assertFalse(getCachedAwardPeriods().isPresent());
 
-        final List<AwardPeriod> actualResponse = restClient.findAll(Ordering.START_DATE);
+        final List<AwardPeriod> actualResponse = restClient.getActiveAwardPeriods();
 
         Assert.assertNotNull(actualResponse);
         Assert.assertFalse(actualResponse.isEmpty());
         BDDMockito.verify(restClientSpy, Mockito.times(1))
-                .findAll(Ordering.START_DATE);
+                .getActiveAwardPeriods();
     }
 
     @SuppressWarnings("unchecked")
-    private Optional<List<AwardPeriod>> getCachedAwardPeriods(Ordering ordering) {
-        return Optional.ofNullable(cacheManager.getCache("awardPeriods")).map(c -> c.get("findAll" + ordering.name(), List.class));
+    private Optional<List<AwardPeriod>> getCachedAwardPeriods() {
+        return Optional.ofNullable(cacheManager.getCache("awardPeriods")).map(c -> c.get("getActiveAwardPeriods", List.class));
     }
 
     @Test
     public void getAwardPeriods_cacheMiss_evicted() {
-        Assert.assertFalse(getCachedAwardPeriods(Ordering.START_DATE).isPresent());
+        Assert.assertFalse(getCachedAwardPeriods().isPresent());
 
-        restClient.findAll(Ordering.START_DATE);
+        restClient.getActiveAwardPeriods();
 
-        Assert.assertTrue(getCachedAwardPeriods(Ordering.START_DATE).isPresent());
+        Assert.assertTrue(getCachedAwardPeriods().isPresent());
 
         awardPeriodCacheServiceImpl.awardPeriodsCacheEvict();
 
-        Assert.assertFalse(getCachedAwardPeriods(Ordering.START_DATE).isPresent());
+        Assert.assertFalse(getCachedAwardPeriods().isPresent());
 
-        restClient.findAll(Ordering.START_DATE);
+        restClient.getActiveAwardPeriods();
 
         BDDMockito.verify(restClientSpy, Mockito.times(2))
-                .findAll(Ordering.START_DATE);
+                .getActiveAwardPeriods();
     }
 
     @Test
     public void getAwardPeriods_cacheHit() {
-        Assert.assertFalse(getCachedAwardPeriods(Ordering.START_DATE).isPresent());
+        Assert.assertFalse(getCachedAwardPeriods().isPresent());
 
-        final List<AwardPeriod> actualResponse1 = restClient.findAll(Ordering.START_DATE);
+        final List<AwardPeriod> actualResponse1 = restClient.getActiveAwardPeriods();
         Assert.assertNotNull(actualResponse1);
 
-        final Optional<List<AwardPeriod>> cachedAwardPeriods = getCachedAwardPeriods(Ordering.START_DATE);
+        final Optional<List<AwardPeriod>> cachedAwardPeriods = getCachedAwardPeriods();
         Assert.assertNotNull(cachedAwardPeriods);
         Assert.assertTrue(cachedAwardPeriods.isPresent());
 
-        final List<AwardPeriod> actualResponse2 = restClient.findAll(Ordering.START_DATE);
+        final List<AwardPeriod> actualResponse2 = restClient.getActiveAwardPeriods();
         Assert.assertNotNull(actualResponse2);
 
         Assert.assertArrayEquals(actualResponse1.toArray(), actualResponse2.toArray());
         Assert.assertArrayEquals(actualResponse1.toArray(), cachedAwardPeriods.get().toArray());
 
         BDDMockito.verify(restClientSpy, Mockito.times(1))
-                .findAll(Ordering.START_DATE);
+                .getActiveAwardPeriods();
     }
 
 }

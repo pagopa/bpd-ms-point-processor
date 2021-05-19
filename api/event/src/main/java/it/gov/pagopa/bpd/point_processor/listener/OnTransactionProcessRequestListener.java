@@ -94,10 +94,10 @@ public class OnTransactionProcessRequestListener extends BaseConsumerAwareEventL
             if (processTransactionCommandModel != null && processTransactionCommandModel.getPayload() != null) {
                 payloadString = new String(payload, StandardCharsets.UTF_8);
                 error = String.format("Unexpected error during transaction processing: %s, %s",
-                        payloadString, e);
+                        payloadString, e.getMessage());
             } else if (payload != null) {
                 error = String.format("Something gone wrong during the evaluation of the payload: %s, %s",
-                        payloadString, e);
+                        payloadString, e.getMessage());
                 if (logger.isErrorEnabled()) {
                     logger.error(error, e);
                 }
