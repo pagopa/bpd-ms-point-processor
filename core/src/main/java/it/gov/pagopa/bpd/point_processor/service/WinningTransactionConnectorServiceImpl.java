@@ -4,6 +4,7 @@ import eu.sia.meda.event.transformer.SimpleEventRequestTransformer;
 import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
+import it.gov.pagopa.bpd.point_processor.service.transformer.HeaderAwareRequestTransformer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.header.Header;
 import org.apache.kafka.common.header.internals.RecordHeaders;
@@ -19,14 +20,14 @@ import org.springframework.stereotype.Service;
 class WinningTransactionConnectorServiceImpl implements WinningTransactionConnectorService {
 
     private final SaveTransactionPublisherConnector saveTransactionPublisherConnector;
-    private final SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
+    private final HeaderAwareRequestTransformer<WinningTransaction> simpleEventRequestTransformer;
     private final SimpleEventResponseTransformer simpleEventResponseTransformer;
 
 
     @Autowired
     public WinningTransactionConnectorServiceImpl(
             SaveTransactionPublisherConnector saveTransactionPublisherConnector,
-            SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformer,
+            HeaderAwareRequestTransformer<WinningTransaction> simpleEventRequestTransformer,
             SimpleEventResponseTransformer simpleEventResponseTransformer) {
         this.saveTransactionPublisherConnector = saveTransactionPublisherConnector;
         this.simpleEventRequestTransformer = simpleEventRequestTransformer;
