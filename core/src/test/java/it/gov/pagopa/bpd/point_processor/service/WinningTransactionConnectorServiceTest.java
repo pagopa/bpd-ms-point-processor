@@ -6,6 +6,7 @@ import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
+import it.gov.pagopa.bpd.point_processor.service.transformer.HeaderAwareRequestTransformer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,7 +34,7 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
     private WinningTransactionConnectorService winningTransactionConnectorService;
 
     @SpyBean
-    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformerSpy;
+    private HeaderAwareRequestTransformer<WinningTransaction> simpleEventRequestTransformerSpy;
 
     @SpyBean
     private SimpleEventResponseTransformer simpleEventResponseTransformerSpy;
