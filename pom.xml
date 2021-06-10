@@ -4,16 +4,16 @@
 
     <parent>
         <groupId>it.gov.pagopa.bpd.ms</groupId>
-        <version>1.0.5</version>
+        <version>1.1.1</version>
         <artifactId>bpd-ms-starter-parent</artifactId>
     </parent>
 
     <artifactId>bpd-ms-point-processor</artifactId>
-    <version>1.0.3</version>
+    <version>CEN-156-157-rc4</version>
     <packaging>pom</packaging>
 
     <properties>
-        <bpd-commons.version>1.0.9</bpd-commons.version>
+        <bpd-commons.version>1.2.1</bpd-commons.version>
     </properties>
 
     <dependencyManagement>
@@ -21,22 +21,22 @@
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
                 <artifactId>bpd-ms-point-processor-integration-event</artifactId>
-                <version>1.0.3</version>
+                <version>CEN-156-157-rc4</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.integration</groupId>
                 <artifactId>bpd-ms-point-processor-integration-rest</artifactId>
-                <version>1.0.3</version>
+                <version>CEN-156-157-rc4</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor</groupId>
                 <artifactId>bpd-ms-point-processor-core</artifactId>
-                <version>1.0.3</version>
+                <version>CEN-156-157-rc4</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.ms.point_processor.api</groupId>
                 <artifactId>bpd-ms-point-processor-api-event</artifactId>
-                <version>1.0.3</version>
+                <version>CEN-156-157-rc4</version>
             </dependency>
             <dependency>
                 <groupId>it.gov.pagopa.bpd.commons.api</groupId>

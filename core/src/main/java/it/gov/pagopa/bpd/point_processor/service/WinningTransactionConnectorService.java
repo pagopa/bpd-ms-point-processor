@@ -2,6 +2,7 @@ package it.gov.pagopa.bpd.point_processor.service;
 
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
+import org.apache.kafka.common.header.Header;
 
 /**
  * Service for managing {@link WinningTransaction} data
@@ -17,6 +18,6 @@ public interface WinningTransactionConnectorService {
      * @param winningTransaction
      *              {@link WinningTransaction} instance to save
      */
-    void saveWinningTransaction(WinningTransaction winningTransaction);
+    void saveWinningTransaction(WinningTransaction winningTransaction, Header statusUpdateHeader);
 
 }

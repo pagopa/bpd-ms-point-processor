@@ -35,7 +35,7 @@ public class OnTransactionProcessRequestListener extends BaseConsumerAwareEventL
 
     @Autowired
     public OnTransactionProcessRequestListener(
-            ModelFactory<Pair<byte[], Headers>,ProcessTransactionCommandModel> processTransactionCommandModelModelFactory,
+            ModelFactory<Pair<byte[], Headers>, ProcessTransactionCommandModel> processTransactionCommandModelModelFactory,
             BeanFactory beanFactory,
             PointProcessorErrorPublisherService pointProcessorErrorPublisherService,
             ObjectMapper objectMapper) {
@@ -50,10 +50,9 @@ public class OnTransactionProcessRequestListener extends BaseConsumerAwareEventL
      * that should contain a JSON payload containing transaction data,
      * calls on a command to execute the check and send logic for the input {@link Transaction} data
      * In case of error, sends data to an error channel
-     * @param payload
-     *          Message JSON payload in byte[] format
-     * @param headers
-     *          Kafka headers from the inbound message
+     *
+     * @param payload Message JSON payload in byte[] format
+     * @param headers Kafka headers from the inbound message
      */
 
     @SneakyThrows
