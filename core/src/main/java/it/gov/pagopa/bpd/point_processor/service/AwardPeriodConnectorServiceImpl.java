@@ -44,7 +44,7 @@ class AwardPeriodConnectorServiceImpl implements AwardPeriodConnectorService {
                     return (accountingDate.equals(startDate) || accountingDate.isAfter(startDate)) &&
                             (accountingDate.equals(endGracePeriodDate) || accountingDate.isBefore(endGracePeriodDate)) &&
                             (trxDate.toLocalDate().equals(startDate) ||
-                                    (trxDate.toLocalDate().isAfter(startDate) && trxDate.toLocalDate().isBefore(endDate))
+                            (trxDate.toLocalDate().isAfter(startDate) && trxDate.toLocalDate().isBefore(endDate))
                                     || trxDate.toLocalDate().equals(endDate));
 
                 })

@@ -6,6 +6,7 @@ import eu.sia.meda.event.transformer.SimpleEventResponseTransformer;
 import it.gov.pagopa.bpd.point_processor.publisher.SaveTransactionPublisherConnector;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
+import it.gov.pagopa.bpd.point_processor.service.transformer.HeaderAwareRequestTransformer;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,7 +34,7 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
     private WinningTransactionConnectorService winningTransactionConnectorService;
 
     @SpyBean
-    private SimpleEventRequestTransformer<WinningTransaction> simpleEventRequestTransformerSpy;
+    private HeaderAwareRequestTransformer<WinningTransaction> simpleEventRequestTransformerSpy;
 
     @SpyBean
     private SimpleEventResponseTransformer simpleEventResponseTransformerSpy;
@@ -57,10 +58,10 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
                     .when(saveTransactionPublisherConnector)
                     .doCall(Mockito.eq(getSaveModel()),Mockito.any(),Mockito.any());
 
-            winningTransactionConnectorService.saveWinningTransaction(getSaveModel());
+            winningTransactionConnectorService.saveWinningTransaction(getSaveModel(), null);
 
             BDDMockito.verify(saveTransactionPublisherConnector, Mockito.atLeastOnce())
-                    .doCall(Mockito.eq(getSaveModel()),Mockito.any(),Mockito.any());
+                    .doCall(Mockito.eq(getSaveModel()),Mockito.any(),Mockito.any(),Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,13 +76,13 @@ public class WinningTransactionConnectorServiceTest extends BaseTest {
         BDDMockito.doAnswer(invocationOnMock -> {
             throw new Exception();
         }).when(saveTransactionPublisherConnector)
-          .doCall(Mockito.any(),Mockito.any(),Mockito.any());
+          .doCall(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any());
 
         expectedException.expect(Exception.class);
-        winningTransactionConnectorService.saveWinningTransaction(null);
+        winningTransactionConnectorService.saveWinningTransaction(null, null);
 
         BDDMockito.verify(saveTransactionPublisherConnector, Mockito.atLeastOnce())
-                .doCall(Mockito.any(),Mockito.any(),Mockito.any());
+                .doCall(Mockito.any(),Mockito.any(),Mockito.any(),Mockito.any());
     }
 
     protected WinningTransaction getSaveModel() {
