@@ -89,4 +89,6 @@ public class WinningTransaction {
     String fiscalCode;
 
     String par;
+
+    String hpanMaster;
 }
