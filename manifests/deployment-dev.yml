@@ -20,6 +20,8 @@ spec:
           envFrom:
             - secretRef:
                 name: bpdmspointprocessor
+            - secretRef:
+                name: application-insights
             - configMapRef:
                 name: bpdmspointprocessor
             - secretRef:
