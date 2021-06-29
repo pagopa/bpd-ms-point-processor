@@ -15,6 +15,7 @@ spec:
       containers:
         - name: bpdmspointprocessor
           image: cstardacr.azurecr.io/bpdmspointprocessor
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
