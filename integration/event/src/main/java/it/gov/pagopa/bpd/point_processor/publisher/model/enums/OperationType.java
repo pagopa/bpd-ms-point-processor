@@ -2,7 +2,6 @@ package it.gov.pagopa.bpd.point_processor.publisher.model.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 
@@ -20,7 +19,7 @@ public enum OperationType {
     private String description;
 
     @JsonCreator
-    public static OperationType getFromCode(@JsonProperty("code") String code) {
+    public static OperationType getFromCode(String code) {
         for (OperationType operationType : OperationType.values()) {
             if (operationType.getCode().equals(code)) {
                 return operationType;
