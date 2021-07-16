@@ -18,12 +18,15 @@ spec:
     spec:
       containers:
         - name: bpdmspointprocessor
-          image: cstaruatregistry.azurecr.io/bpdmspointprocessor
+          image: cstaruacr.azurecr.io/bpdmspointprocessor
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
             - secretRef:
                 name: bpdmspointprocessor
+            - secretRef:
+                name: application-insights
             - configMapRef:
                 name: bpdmspointprocessor
             - secretRef:
@@ -64,7 +67,3 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             failureThreshold: 30
-      hostAliases:
-        - hostnames:
-            - bpd-event-uat.servicebus.windows.net
-          ip: 10.70.67.5
