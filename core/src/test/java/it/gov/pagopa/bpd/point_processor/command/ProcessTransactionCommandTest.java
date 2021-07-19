@@ -10,6 +10,7 @@ import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
 import it.gov.pagopa.bpd.point_processor.service.AwardPeriodConnectorService;
 import it.gov.pagopa.bpd.point_processor.service.WinningTransactionConnectorService;
 import lombok.SneakyThrows;
+import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -70,10 +71,10 @@ public class ProcessTransactionCommandTest extends BaseTest {
 
         Transaction transaction = getCommandModel();
         BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
-                .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
+        ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
+                ProcessTransactionCommandModel.builder().payload(transaction).headers(new RecordHeaders()).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
                 beanFactoryMock,
@@ -91,7 +92,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                     .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                    .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -161,10 +162,10 @@ public class ProcessTransactionCommandTest extends BaseTest {
         WinningTransaction winningTransaction = getSaveModel();
         winningTransaction.setScore(BigDecimal.valueOf(-1));
         BDDMockito.doNothing().when(winningTransactionConnectorServiceMock)
-                .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
-        ProcessTransactionCommand processTransactionCommand = new ProcessTransactionCommandImpl(
-                ProcessTransactionCommandModel.builder().payload(transaction).build(),
+        ProcessTransactionCommandImpl processTransactionCommand = new ProcessTransactionCommandImpl(
+                ProcessTransactionCommandModel.builder().payload(transaction).headers(new RecordHeaders()).build(),
                 winningTransactionConnectorServiceMock,
                 awardPeriodConnectorServiceMock,
                 beanFactoryMock,
@@ -182,7 +183,7 @@ public class ProcessTransactionCommandTest extends BaseTest {
                     .getAwardPeriod(Mockito.eq(localDate), Mockito.any());
             BDDMockito.verify(ruleEngineExecutionCommandMock, Mockito.atLeastOnce()).execute();
             BDDMockito.verify(winningTransactionConnectorServiceMock, Mockito.atLeastOnce())
-                    .saveWinningTransaction(Mockito.eq(getSaveModel()));
+                    .saveWinningTransaction(Mockito.eq(getSaveModel()), Mockito.any());
 
         } catch (Exception e) {
             e.printStackTrace();
