@@ -18,7 +18,7 @@ public enum OperationType {
     private String code;
     private String description;
 
-    @JsonCreator
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
     public static OperationType getFromCode(String code) {
         for (OperationType operationType : OperationType.values()) {
             if (operationType.getCode().equals(code)) {
