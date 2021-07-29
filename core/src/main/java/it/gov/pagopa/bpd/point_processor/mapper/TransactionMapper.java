@@ -3,7 +3,6 @@ package it.gov.pagopa.bpd.point_processor.mapper;
 import it.gov.pagopa.bpd.point_processor.command.model.Transaction;
 import it.gov.pagopa.bpd.point_processor.publisher.model.WinningTransaction;
 import it.gov.pagopa.bpd.point_processor.publisher.model.enums.OperationType;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,7 +23,21 @@ public class TransactionMapper {
 
         if (transaction != null) {
             winningTransaction = WinningTransaction.builder().build();
-            BeanUtils.copyProperties(transaction, winningTransaction);
+            winningTransaction.setTrxDate(transaction.getTrxDate());
+            winningTransaction.setTerminalId(transaction.getTerminalId());
+            winningTransaction.setMerchantId(transaction.getMerchantId());
+            winningTransaction.setIdTrxIssuer(transaction.getIdTrxIssuer());
+            winningTransaction.setMcc(transaction.getMcc());
+            winningTransaction.setIdTrxAcquirer(transaction.getIdTrxAcquirer());
+            winningTransaction.setHpan(transaction.getHpan());
+            winningTransaction.setCorrelationId(transaction.getCorrelationId());
+            winningTransaction.setCircuitType(transaction.getCircuitType());
+            winningTransaction.setBin(transaction.getBin());
+            winningTransaction.setAmountCurrency(transaction.getAmountCurrency());
+            winningTransaction.setAcquirerCode(transaction.getAcquirerCode());
+            winningTransaction.setAcquirerId(transaction.getAcquirerId());
+            winningTransaction.setFiscalCode(transaction.getFiscalCode());
+            winningTransaction.setAmount(transaction.getAmount());
             winningTransaction.setOperationType(OperationType.getFromCode(transaction.getOperationType()));
         }
 
